@@ -126,7 +126,10 @@ rules = [
     {"inputs": {"jas": "medium", "temp": "low", "usage": "high", "per": "medium"}, "output": {"vydrz": "medium"}, "operator": "AND"},
     {"inputs": {"jas": "low", "temp": "medium", "usage": "high", "per": "low"}, "output": {"vydrz": "medium"}, "operator": "AND"},
     {"inputs": {"jas": "high", "temp": "max", "usage": "medium", "per": "medium"}, "output": {"vydrz": "low"}, "operator": "AND"},
-    {"inputs": {"jas": "max", "temp": "low", "usage": "low", "per": "high"}, "output": {"vydrz": "high"}, "operator": "AND"},]
+    {"inputs": {"jas": "max", "temp": "low", "usage": "low", "per": "high"}, "output": {"vydrz": "high"}, "operator": "AND"},
+    {"inputs": {"jas": "max", "temp": "low", "usage": "low", "per": "high"}, "output": {"vydrz": "high"}, "operator": "AND"},
+    {"inputs": {"jas": "max", "temp": "low", "usage": "low", "per": "low"}, "output": {"vydrz": "low"}, "operator": "AND"},
+    {"inputs": {"jas": "low", "temp": "medium", "usage": "low", "per": "low"}, "output": {"vydrz": "medium"}, "operator": "AND"},]
 
 
 
