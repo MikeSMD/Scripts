@@ -9,16 +9,16 @@ namespace Star
 	
 	}
 
-	struct Point
+	public struct Point
 	{
 		private double[] _dimensions;
-		private char _sign;
+		public char sign;
 		public Point(int dimensions, char sign )
 		{
 			if (dimensions <= 0)
 				throw new ArgumentException("Count must be positive.");
 			_dimensions = new double[ dimensions ];
-			this._sign = sign;
+			this.sign = sign;
 		}
 
 		public double this[ int index ]

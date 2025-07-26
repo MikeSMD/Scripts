@@ -4,7 +4,7 @@ namespace Star
 {
 	interface IRenderable
 	{
-		public Point[] points {get; private set;}
+		public Point[] points {get;}
 		
 	}	
 }

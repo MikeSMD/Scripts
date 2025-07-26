@@ -1,0 +1,15 @@
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.GeneratedMSBuildEditorConfig.editorconfig
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.AssemblyInfoInputs.cache
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.AssemblyInfo.cs
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.csproj.CoreCompileInputs.cache
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.sourcelink.json
+/home/mike2k/Documents/Scripts/RotateStar/bin/Debug/net9.0/RotateStar
+/home/mike2k/Documents/Scripts/RotateStar/bin/Debug/net9.0/RotateStar.deps.json
+/home/mike2k/Documents/Scripts/RotateStar/bin/Debug/net9.0/RotateStar.runtimeconfig.json
+/home/mike2k/Documents/Scripts/RotateStar/bin/Debug/net9.0/RotateStar.dll
+/home/mike2k/Documents/Scripts/RotateStar/bin/Debug/net9.0/RotateStar.pdb
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.dll
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/refint/RotateStar.dll
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.pdb
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/RotateStar.genruntimeconfig.cache
+/home/mike2k/Documents/Scripts/RotateStar/obj/Debug/net9.0/ref/RotateStar.dll

@@ -20,13 +20,14 @@ namespace Star
 		{
 			switch( _projectionPlane )
 			{
-				case xy:
+				case Plane.xy:
 					return ( p[0], p[1], p[2] );
-				case yz: 
+				case Plane.yz: 
 					return ( p[1], p[2], p[0] );
-				case xz:
+				case Plane.xz:
 					return ( p[0], p[2], p[1] );
 			}
+			return (0.0, 0.0, double.PositiveInfinity);
 		}
 	}
 }
