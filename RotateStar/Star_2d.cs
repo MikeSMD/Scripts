@@ -5,6 +5,7 @@ namespace Star
 	class Star_2d : IRenderable
 	{
 		public Point[] points {get; private set;}
+		public List < Transformation > transformations {get; private set; }
 
 		/**
 		 * plane - v jake rovine mit tu 2d hvezdu
@@ -12,7 +13,8 @@ namespace Star
 		 */
 		public Star_2d( int size, Plane plane, char sign )
 		{
-			if ( size >= 2 )
+			transformations = new List <Transformation> ();
+			if ( size <= 2 )
 			{
 				throw new ArgumentException ("size musi byt alespon 3");
 			}
@@ -22,53 +24,61 @@ namespace Star
 			}
 			int val = 1;
 			int mid = (size + 1) / 2;
-			int offset = 0;
+			int offset = 1;
 			int last = 1;
 			List< Point > points_list = new List< Point > ();
 			while( offset <= mid )
 			{
-				if ( val % 2 == 0 )
+				int stars = val;
+				if ( stars % 2 == 0 )
 				{
-					if ( offset != mid || val - 1 != last ) )
+					if ( offset != mid || stars - 1 != last )
 					{
-						val -= 1;
+						stars -= 1;
 					}
 				}
-				for ( int row_index = 0; row_index < 2; ++i )
+				for ( int row_index = 0; row_index < 2; ++row_index)
 				{
 					if ( mid == offset && row_index == 1 )
 						continue;
-					int row = (row_index == 0)? offset : mid + offset;
+					int row = (row_index == 0)? offset : 2*mid - offset;
 				
-
-					for ( int i = 0; i < val; ++i )
+					for ( int i = 0; i < stars; ++i )
 					{
 						Point k = new Point( 3 , sign );
 
 						switch ( plane )
 						{
-							case Plane.xy
+							case Plane.xy:
 							{
-								k.SetCoordinates([i - val/2, row, 0.0]);
+								k.SetCoordinates([i - stars/2, row, 0.0]);
+								break;
 							}
-							case Plane.yz
+							case Plane.yz:
 							{
-								k.SetCoordinates([0.0, i - val/2, row]); 
+								k.SetCoordinates([0.0, i - stars/2, row]); 
+								break;
 							}
-							case Plane.xz
+							case Plane.xz:
 							{
-								k.SetCoordinates([i - val/2, 0.0, row]);
+								k.SetCoordinates([i - stars/2, 0.0, row]);
+								break;
 							}
 						}
-						points_list.Append( k );
+						points_list.Add( k );
 					}
 				}
-				last = val;
-				val = val >> 1;
+				last = stars;
+				val = val << 1;
+				offset += 1;
 			}
 			points = points_list.ToArray();
 		}
-
+		public void addTransformation( Transformation q )
+		{
+			transformations.Add( q );
+		}
+			
 		/** 	
 		 * pomoci exponenicalni funkce..
 		 *	

@@ -11,7 +11,7 @@ namespace Star
 	{
 		private Plane _projectionPlane;
 
-		public OrthogonalProjection(double width, double height, Plane projection)
+		public OrthogonalProjection(Plane projection)
 		{
 			_projectionPlane = projection;
 		}

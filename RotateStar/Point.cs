@@ -38,12 +38,22 @@ namespace Star
 		}
 
 
-
+		public Point Copy()
+		{
+			Point res = new Point(this._dimensions.Length, this.sign);
+			res.SetCoordinates( this._dimensions );
+			return res;
+		}
 		public void SetCoordinates(double[] coordinates)
 		{
 			if (coordinates == null || coordinates.Length != _dimensions.Length)
 				throw new ArgumentException("Invalid coordinates array.");
 			_dimensions = (double[])coordinates.Clone();
+		}
+
+		public int getDimensions()
+		{
+			return _dimensions.Length;
 		}
 	}
 }

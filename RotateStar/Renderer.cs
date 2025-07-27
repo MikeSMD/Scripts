@@ -11,7 +11,7 @@ namespace Star
 		private (char sign, bool changed)[][] _scene;
 		private IProjection _projection;
 
-		public ConsoleRenderer( int width, int heighr, int scale, IProjection projection )
+		public ConsoleRenderer( int width, int heighr, double scale, IProjection projection )
 		{
 			if ( width < 0 || heighr < 0 || scale <= 0.0 )
 			{
@@ -22,7 +22,7 @@ namespace Star
 			_heighr = heighr;
 			_scale = scale;
 			_projection = projection;
-			_scene = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ',false), width).ToArray()).ToArray();
+			_scene = Enumerable.Range(0, _width).Select(_ => Enumerable.Repeat((' ',true), _heighr).ToArray()).ToArray();
 		}
 
 
@@ -31,29 +31,32 @@ namespace Star
 
 		public void RenderScene()
 		{
-			(char sign, double depth)[][] grid = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ', double.PositiveInfinity), _width).ToArray()).ToArray();
+			(char sign, double depth)[][] grid = Enumerable.Range(0, _width).Select(_ => Enumerable.Repeat((' ', double.PositiveInfinity), _heighr).ToArray()).ToArray();
 
 			foreach( IRenderable r in _registered )
 			{
-				for ( int i = 0; i < r.points.Length; ++i )
+				Point[] points = TransformSequence.applyMultipleTransformations(r.transformations, r.points);
+				for ( int i = 0; i < points.Length; ++i )
 				{
-					(double x, double y, double depth ) newpoints= _projection.projectPoint( r.points[ i ] );
+					(double x, double y, double depth ) newpoints= _projection.projectPoint( points[ i ] );
 					newpoints.x = newpoints.x * _scale + (_width / 2);
 					newpoints.y = newpoints.y * _scale + (_heighr / 2);
 
 					int x =(int) Math.Round(newpoints.x);
 					int y =(int) Math.Round( newpoints.y);
-
-					if ( grid [ y ][ x ].depth < newpoints.depth )
+					if ( x >= _width || y >= _heighr )
+						continue;
+					if ( grid [ x ][ y ].depth > newpoints.depth )
 					{
-						grid[ y ][ x ].sign = r.points[ i ].sign;
-						grid[ y ][ x ].depth = newpoints.depth;
+						grid[ x ][ y ].sign = r.points[ i ].sign;
+						grid[ x ][ y ].depth = newpoints.depth;
 					}
 				}
 			}
-			for ( int i = 0; i < _heighr; ++i )
+
+			for ( int i = 0; i < _width; ++i )
 			{
-				for ( int j = 0; j < _width; ++i )
+				for ( int j = 0; j < _heighr; ++j )
 				{
 					if ( grid[ i ][ j ].sign != _scene[ i ][ j ].sign )
 					{
@@ -62,18 +65,23 @@ namespace Star
 					}
 				}
 			}
-
-			for ( int i = 0; i < _heighr; ++i )
+			for ( int i = 0; i < _width; ++i )
 			{
-				for ( int j = 0; j < _width; ++i )
+				for ( int j = 0; j < _heighr; ++j )
 				{
 					if ( _scene[ i ][ j ].changed )
 					{
 						Console.SetCursorPosition(i,j);
 						Console.WriteLine($"{_scene[ i ][ j ].sign}");
+						_scene[ i ][ j ].changed = false;
 					}
 				}
 			}
+		}
+
+		public void Register(IRenderable q)
+		{
+			_registered.Add( q );
 		}
 	}
 }

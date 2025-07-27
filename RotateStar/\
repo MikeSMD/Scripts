@@ -1,78 +1,28 @@
-using System;
+﻿using System;
 
 namespace Star
 {
-	class Star_2d : IRenderable
+
+
+	class MainStar
 	{
-		public Point[] points {get; private set;}
-
-		/**
-		 * plane - v jake rovine mit tu 2d hvezdu
-		 * velist - pocet radku
-		 */
-		public Star_2d( int size, Plane plane, char sign )
+		public static void Main( string[] args )
 		{
-			if ( size % 2 == 0 )
+			Console.WriteLine("predone");
+			Star_2d s = new Star_2d(9, Plane.xy, '*' );
+			Console.WriteLine("done");
+			OrthogonalProjection pj = new OrthogonalProjection( Plane.xy );
+			ConsoleRenderer cr = new ConsoleRenderer(60,25, 1, pj);
+			Move m = new Move([-5.0, 1.0, 1.0]);
+			s.addTransformation( m );
+			cr.Register(s);
+			int k = 1000;
+			while( k-- != 0 )
 			{
-				size -= 1;
+				cr.RenderScene();
+				m.vecmove[ 0 ] = m.vecmove[ 0 ] + 0.1; 
 			}
-			int val = 1;
-			int mid = (size + 1) / 2;
-			int offset = 0;
-			int last = 1;
-			List< Point > points_list = new List< Point > ();
-			while( offset <= mid )
-			{
-				if ( val % 2 == 0 )
-				{
-					if ( offset != mid || val - 1 != last ) )
-					{
-						val -= 1;
-					}
-				}
-				int row = mid + offset;
-				for ( int i = 0; i < val; ++i )
-				{
-					Point k = new Point( 3 , sign );
 
-					switch ( plane )
-					{
-						case Plane.xy
-						{
-							k.SetCoordinates([val, mid+offset, 0.0]);
-							k.SetCoordinates([val, offset, 0.0]);
-						}
-					}
-				}
-				last = val;
-				val = val >> 1;
-			}
 		}
-
-		/** 	
-		 * pomoci exponenicalni funkce..
-		 *	
-		 * bitovy posun (-1 u sudych pokud neni stred pak stejny jak ostatni) 
-		 * 1 -> 2 -> 4 -> 8 -> 16 - velikost - 9/10
-		 *
-		 * 		*
-		 * 	        *
-		 * 	       ***
-		 * 	     *******
-		 * 	 ***************
-		 * 	     *******
-		 * 	       ***
-		 * 	        *
-		 * 	        *
-		 *
-		 * 	       //velikost 3
-		 *
-		 *		*
-		 *	       ***
-		 *	        *
-		 *
-		 *
-		 *
-		 */	
-		}
+	}
 }
