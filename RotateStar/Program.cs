@@ -5,7 +5,7 @@ namespace Star
 	class MainStar
 	{
 		public static void Main( string[] args )
-		{//
+		{
 			Console.WriteLine("predone");
 			Star_2d s = new Star_2d(11, Plane.xy, '*' ); 
 			Star_2d s2 = new Star_2d(9, Plane.xy, 'o', ' ');
