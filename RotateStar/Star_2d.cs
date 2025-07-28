@@ -11,7 +11,7 @@ namespace Star
 		 * plane - v jake rovine mit tu 2d hvezdu
 		 * velist - pocet radku
 		 */
-		public Star_2d( int size, Plane plane, char sign, char fill = '.' )
+		public Star_2d( int size, Plane plane, char sign, char fill = '.', ConsoleColor cc = ConsoleColor.White)
 		{
 			transformations = new List <Transformation> ();
 			if ( size <= 2 )
@@ -51,7 +51,7 @@ namespace Star
 						{
 							ksign = fill;
 						}
-						Point k = new Point( 3 , ksign );
+						Point k = new Point( 3 , ksign, cc);
 
 						switch ( plane )
 						{

@@ -14,12 +14,13 @@ namespace Star
 		private double[] _dimensions;
 		public char sign;
 		public ConsoleColor cc;
-		public Point(int dimensions, char sign )
+		public Point(int dimensions, char sign, ConsoleColor cc = ConsoleColor.White )
 		{
 			if (dimensions <= 0)
 				throw new ArgumentException("Count must be positive.");
 			_dimensions = new double[ dimensions ];
 			this.sign = sign;
+			this.cc = cc;
 		}
 
 		public double this[ int index ]

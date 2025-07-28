@@ -8,7 +8,7 @@ namespace Star
 		private int _width;
 		private int _heighr;
 		private double _scale;
-		private (char sign, bool changed)[][] _scene;
+		private (char sign, bool changed, ConsoleColor cc)[][] _scene;
 		private IProjection _projection;
 
 		public ConsoleRenderer( int width, int heighr, double scale, IProjection projection )
@@ -22,7 +22,7 @@ namespace Star
 			_heighr = heighr;
 			_scale = scale;
 			_projection = projection;
-			_scene = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ',true), _width).ToArray()).ToArray();
+			_scene = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ',true, ConsoleColor.White), _width).ToArray()).ToArray();
 		}
 
 
@@ -31,7 +31,7 @@ namespace Star
 
 		public void RenderScene()
 		{
-			(char sign, double depth)[][] grid = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ', double.PositiveInfinity), _width).ToArray()).ToArray();
+			(char sign, double depth, ConsoleColor cc)[][] grid = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ', double.NegativeInfinity,ConsoleColor.White ), _width).ToArray()).ToArray();
 
 			foreach( IRenderable r in _registered )
 			{
@@ -46,11 +46,12 @@ namespace Star
 					int y =(int) Math.Floor( newpoints.y);
 					if ( x >= _width || y >= _heighr || x < 0 || y < 0.1 )
 						continue;
-
-					if ( grid [ y ][ x ].depth > newpoints.depth )
+						if ( newpoints.depth > 0 ) continue;
+					if ( grid [ y ][ x ].depth < newpoints.depth )
 					{
 						grid[ y ][ x ].sign = r.points[ i ].sign;
 						grid[ y ][ x ].depth = newpoints.depth;
+						grid[ y ] [ x ].cc = r.points[ i ].cc;
 					}
 				}
 			}
@@ -59,10 +60,11 @@ namespace Star
 			{
 				for ( int j = 0; j < _width; ++j )
 				{
-					if ( grid[ i ][ j ].sign != _scene[ i ][ j ].sign )
+					if ( grid[ i ][ j ].sign != _scene[ i ][ j ].sign || grid[ i ] [ j ].cc != _scene[ i ][ j ].cc)
 					{
 						_scene[ i ][ j ].sign = grid[ i ][ j ].sign;
 						_scene[ i ][ j ].changed = true;
+						_scene[ i ][ j ].cc = grid[ i ][ j ].cc;
 					}
 				}
 			}
@@ -73,6 +75,7 @@ namespace Star
 					if ( _scene[ i ][ j ].changed )
 					{
 						Console.SetCursorPosition(j,i);
+						Console.ForegroundColor = _scene[i][j].cc;
 						Console.WriteLine($"{_scene[ i ][ j ].sign}");
 						_scene[ i ][ j ].changed = false;
 					}
