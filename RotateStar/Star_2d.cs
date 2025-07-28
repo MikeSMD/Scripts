@@ -11,7 +11,7 @@ namespace Star
 		 * plane - v jake rovine mit tu 2d hvezdu
 		 * velist - pocet radku
 		 */
-		public Star_2d( int size, Plane plane, char sign )
+		public Star_2d( int size, Plane plane, char sign, char fill = '.' )
 		{
 			transformations = new List <Transformation> ();
 			if ( size <= 2 )
@@ -46,7 +46,12 @@ namespace Star
 				
 					for ( int i = 0; i < stars; ++i )
 					{
-						Point k = new Point( 3 , sign );
+						char ksign = sign;
+						if ( !( i == 0 || i == stars -1 ) )
+						{
+							ksign = fill;
+						}
+						Point k = new Point( 3 , ksign );
 
 						switch ( plane )
 						{
