@@ -36,6 +36,7 @@ namespace Star
 					{
 						stars -= 1;
 					}
+					else stars += 1;
 				}
 				for ( int row_index = 0; row_index < 2; ++row_index)
 				{

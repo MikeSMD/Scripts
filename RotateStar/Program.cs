@@ -7,7 +7,7 @@ namespace Star
 		public static void Main( string[] args )
 		{
 			Console.WriteLine("predone");
-			Star_2d s = new Star_2d(9, Plane.xy, '*' );
+			Star_2d s = new Star_2d(11, Plane.xy, '*' );
 			Star_2d s2 = new Star_2d(9, Plane.xy, 'o' );
 			Console.WriteLine("done");
 			OrthogonalProjection pj = new OrthogonalProjection( Plane.xy );
@@ -27,8 +27,8 @@ namespace Star
 				m.vecmove[ 0 ] = m.vecmove[ 0 ] + 1; 
 				m.vecmove[ 1 ] = m.vecmove[ 1 ] - 0.2; 
 
-				m2.vecmove[ 0 ] = m2.vecmove[ 0 ] - 1; 
-				m2.vecmove[ 1 ] = m2.vecmove[ 1 ] - 0.1;
+				m2.vecmove[ 0 ] = m2.vecmove[ 0 ] - 0.5; 
+				m2.vecmove[ 1 ] = m2.vecmove[ 1 ] - 0.1;//
 				Thread.Sleep(60);
 			}
 

@@ -42,8 +42,8 @@ namespace Star
 					newpoints.x = newpoints.x * _scale + (_width / 2);
 					newpoints.y = newpoints.y * _scale + (_heighr / 2);
 
-					int x =(int) Math.Round(newpoints.x);
-					int y =(int) Math.Round( newpoints.y);
+					int x =(int) Math.Floor(newpoints.x);
+					int y =(int) Math.Floor( newpoints.y);
 					if ( x >= _width || y >= _heighr )
 						continue;
 					if ( grid [ x ][ y ].depth > newpoints.depth )
