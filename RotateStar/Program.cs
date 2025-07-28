@@ -22,7 +22,7 @@ namespace Star
 			s2.addTransformation( m2 );
 			cr.Register(s);
 			cr.Register(s2);
-			int k = 500;
+			int k = 1000;
 
 
 			while( k-- != 0 )
