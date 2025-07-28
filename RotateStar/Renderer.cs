@@ -40,7 +40,7 @@ namespace Star
 				{
 					(double x, double y, double depth ) newpoints= _projection.projectPoint( points[ i ] );
 					newpoints.x = newpoints.x * _scale + (_width / 2);
-					newpoints.y = -newpoints.y * _scale + (_heighr / 2);
+					newpoints.y = -newpoints.y * 0.5 * _scale + (_heighr / 2); //kompenzace osy y
 
 					int x =(int) Math.Floor(newpoints.x);
 					int y =(int) Math.Floor( newpoints.y);

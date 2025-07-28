@@ -13,6 +13,7 @@ namespace Star
 	{
 		private double[] _dimensions;
 		public char sign;
+		public ConsoleColor cc;
 		public Point(int dimensions, char sign )
 		{
 			if (dimensions <= 0)
