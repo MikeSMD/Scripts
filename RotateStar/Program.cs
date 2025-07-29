@@ -12,17 +12,20 @@ namespace Star
 			Console.WriteLine("done");
 			OrthogonalProjection pj = new OrthogonalProjection( Plane.xy );
 			PrespectiveProjection rj = new PrespectiveProjection(Plane.xy, 1.0 );
-			ConsoleRenderer cr = new ConsoleRenderer(100, 25, 30, rj);
+			ConsoleRenderer cr = new ConsoleRenderer(200, 55, 30, rj);
 		//	Scale sc = new Scale([0.5, 0.5, 0.5]);
-			Rotation r = new Rotation (0, Osa.y);
+			Rotation r = new Rotation (1, Osa.y);
 			Move m2 = new Move([0.0, -5.0, -50]);
-			Move m= new Move([0.0, -5.0, -17]);
-			s.addTransformation( r );
-			s.addTransformation( m );
+		//	Ball b = new Ball(5, 'o', ConsoleColor.Green, 2);
+		//	Cylinder b = new Cylinder(5, 12, 'k', '.', Osa.y, ConsoleColor.DarkYellow, 2);
+			Tree b = new Tree (3,15,8);
+			Move m= new Move([0.0, 1.0, -17]);
+			b.Koruna.addTransformation( r );
+			 b.addTransformationAll( m );
 			s2.addTransformation( m2 );
-			cr.Register(s);
+			b.RegisterAll(cr);
 			cr.Register(s2);
-			int k = 1000;
+			int k = -1;
 
 
 			while( k-- != 0 )
@@ -33,7 +36,7 @@ namespace Star
 			//		sc.vecscale[ i ] = sc.vecscale[ i ] + 0.1;
 				r.angle +=0.1;
 				 m2.vecmove[ 2 ] = m2.vecmove[ 2 ] + 0.2; 
-				Thread.Sleep(15);
+				Thread.Sleep(60);
 			}
 
 		}
