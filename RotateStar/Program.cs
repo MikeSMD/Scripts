@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-namespace Star
+namespace Star//
 {
 	class MainStar
 	{
