@@ -13,6 +13,7 @@ namespace Star
 		 */
 		public Ball( double radius, char sign, ConsoleColor cc = ConsoleColor.White, int ro = 1 )
 		{
+			Random rnd = new Random();
 			transformations = new List <Transformation> ();
 			if ( radius <= 0.0 )
 			{
@@ -27,7 +28,13 @@ namespace Star
 
 				for (int j = 0; j <= steps; j++)
 				{
-					Point p = new Point( 3, sign, cc);
+					char psign = sign;
+					if ( psign == sign )
+					{
+						psign = (char)rnd.Next('a', 'z' + 1);
+
+					}
+					Point p = new Point( 3, psign, cc);
 					double theta = 2 * Math.PI * j / steps; // azimut: 0 .. 2π
 
 					p[ 0 ] = radius * Math.Sin(phi) * Math.Cos(theta);

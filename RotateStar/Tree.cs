@@ -15,7 +15,7 @@ namespace Star
 		public Tree( double kmen_radius, double kmen_height,double koruna_radius, Osa osa = Osa.y, int roKmen = 2, int roKoruna = 2)
 		{
 			Kmen = new Cylinder(kmen_radius, kmen_height,'|', '.', osa, ConsoleColor.DarkYellow ,roKmen);
-			Koruna = new Ball(koruna_radius, 'o', ConsoleColor.Green,roKoruna);
+			Koruna = new Ball(koruna_radius, '\0', ConsoleColor.Green,roKoruna);
 			Move move;
 			if ( osa == Osa.x )
 			{
