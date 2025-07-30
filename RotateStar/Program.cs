@@ -3,7 +3,7 @@ using System.Threading;
 namespace Star
 {
 	class MainStar
-	{//
+	{
 		public static void Main( string[] args )
 		{
 			Console.WriteLine("predone");
