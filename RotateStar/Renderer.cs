@@ -4,7 +4,6 @@ namespace Star
 {
 	class ConsoleRenderer
 	{
-		private List < IRenderable > _registered = new List < IRenderable > ();
 		private int _width;
 		private int _heighr;
 		private double _scale;
@@ -12,7 +11,7 @@ namespace Star
 		private IProjection _projection;
 		private Camera camera;
 
-		public ConsoleRenderer( int width, int heighr, double scale, IProjection projection, Camera camera )
+		public ConsoleRenderer( int width, int heighr, double scale, IProjection projection, Camera camera = null )
 		{
 			if ( width < 0 || heighr < 0 || scale <= 0.0 )
 			{
@@ -35,18 +34,23 @@ namespace Star
 		}
 
 
-		public void RenderScene()
+		public void RenderScene( List < IRenderable > render_obects )
 		{
 			(char sign, double depth, ConsoleColor cc)[][] grid = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ', double.PositiveInfinity,ConsoleColor.White ), _width).ToArray()).ToArray();
 
-			foreach( IRenderable r in _registered )
+			foreach( IRenderable r in render_obects )
 			{
 				//spojení matic do homogenní matice- případ na dodělání
 				Point[] points = TransformSequence.applyMultipleTransformations(r.transformations, r.points);
 				for ( int i = 0; i < points.Length; ++i )
 				{
-					points[ i ].MakeHomogenous();
-					Point p = this.camera.applyViewMatrix( points[ i ] );
+					Point p = points[ i ];
+					if ( this.camera != null )
+					{
+						points[ i ].MakeHomogenous();
+						p = this.camera.applyViewMatrix( points[ i ] );
+					}
+				
 				//	p.MakeKartezs();
 
 					(double x, double y, double depth ) newpoints= _projection.projectPoint( p );
@@ -55,7 +59,7 @@ namespace Star
 					 * newpoints.x = newpoints.x * _scale + (_width / 2);
 					newpoints.y = -newpoints.y * 0.5 * _scale + (_heighr / 2); //kompenzace osy y
 					 * */
-					newpoints.x = newpoints.x ;
+					// newpoints.x = newpoints.x ;
 					newpoints.y = newpoints.y * 0.5;
 
 					int x =(int) Math.Floor(newpoints.x);
@@ -107,9 +111,5 @@ namespace Star
 			}
 		}
 
-		public void Register(IRenderable q)
-		{
-			_registered.Add( q );
-		}
 	}
 }

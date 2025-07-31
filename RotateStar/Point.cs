@@ -4,7 +4,7 @@ namespace Star
 {
 
 
-	public struct Point
+	public class Point
 	{
 		private double[] _dimensions;
 		public char sign;

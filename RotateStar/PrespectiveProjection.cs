@@ -5,21 +5,20 @@ namespace Star
 
 	class PrespectiveProjection : IProjection
 	{
-		private Plane _projectionPlane;
 		private double focal;
 		private double width;
 		private double height;
 		private double near;
 		private double far;
-			public PrespectiveProjection(Plane projection,double width, double height, double focal, double near, double far  )
+			public PrespectiveProjection(double width, double height, double focal, double near, double far  )
 		{
 			this.focal = focal;
-			_projectionPlane = projection;
 			this.width = width;
 			this.height = height;
 			this.near = near;
 			this.far = far;
 		}
+			/*
 		public (double x, double y, double depth ) SimpleProjectPoint( Point p ) 
 		{
 			// pouze pro zobrazení z pohledu rovin. bez pohledové matice kdy chceme ji mít impleicitní v 0,0 natočenou na danou rovinu - není nutný viewmatrix,jen pro projekci rovin.
@@ -38,6 +37,7 @@ namespace Star
 			}
 			return (0.0, 0.0, double.PositiveInfinity);
 		}
+		*/
 		
 		public (double x, double y, double depth ) SimpleViewMatrixProjectPoint( Point p ) 
 		{

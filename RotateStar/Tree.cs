@@ -36,10 +36,10 @@ namespace Star
 			Koruna.addTransformation( q );
 			Kmen.addTransformation( q );
 		}
-		public void RegisterAll( ConsoleRenderer k )
+		public void RegisterAll( Scene k )
 		{
-			k.Register(Kmen);
-			k.Register(Koruna);
+			k.AddObject (Kmen);
+			k.AddObject (Koruna);
 			//k.Register(kmen);
 		}
 	}
