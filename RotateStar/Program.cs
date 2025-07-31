@@ -12,23 +12,36 @@ namespace Star
 			Console.WriteLine("done");
 			OrthogonalProjection pj = new OrthogonalProjection( Plane.xy );
 			Point lookAt = new Point(3, ' ');
-			lookAt.SetCoordinates([0.0, 0.0, -1.0]);
+			lookAt.SetCoordinates([0.0, 7.0, -1.0]);
 			Point eye = new Point(3, ' ');
-			eye.SetCoordinates([0.0, 0.0, 0.0]);
+			eye.SetCoordinates([0.0, 7.0, 0.0]);
 			Point up = new Point(3, ' ');
 			up.SetCoordinates([0.0, 1.0, 0.0 ]);
 			Camera c = new Camera(eye, lookAt, up);
-			PrespectiveProjection rj = new PrespectiveProjection(Plane.xy, 260, 80, Math.PI / 3, 0.1, 100.0 );
-			ConsoleRenderer cr = new ConsoleRenderer(260, 80, 1, rj,c);
+			PrespectiveProjection rj = new PrespectiveProjection(Plane.xy, 1000, 150, Math.PI / 4, 0.1, 100.0 );
+			ConsoleRenderer cr = new ConsoleRenderer(1000, 150, 1, rj,c);
 		//	Scale sc = new Scale([0.5, 0.5, 0.5]);
 			Rotation r = new Rotation (1, Osa.y);
 			Move m2 = new Move([0.0, -5.0, -50]);
 		//	Ball b = new Ball(5, 'o', ConsoleColor.Green, 2);
 		//	Cylinder b = new Cylinder(5, 12, 'k', '.', Osa.y, ConsoleColor.DarkYellow, 2);
 			Tree b = new Tree (2,15,8, Osa.y, 5, 2);
-			Move m= new Move([0.0, 0.0, -25.0]);
-			Plane_2d kr = new Plane_2d(100,100, Plane.xz , '.', ConsoleColor.Green, 3 );
-			Move mk=new Move([-50.0, 7.0, -50.0]);
+			Move m= new Move([0.0, -7.5, -25.0]);
+
+			Random rnd = new Random();
+			for ( int i = 0; i < 5; ++i )
+			{
+					double z = ( double ) - rnd.Next() % 100;
+					double x = (double) rnd.Next() % 151 - 75;
+					double height = (double) rnd.Next() % 22 + 3;
+					Tree br = new Tree (2*height/15,height,height/2, Osa.y, 7, 3);
+					Move mr = new Move([x, - height - 2, z]);
+					br.addTransformationAll( mr );
+					br.RegisterAll( cr );
+					//iteratorova funkce pro nastaveni pohybu?
+			}
+			Plane_2d kr = new Plane_2d(1000,1000, Plane.xz , '.', ConsoleColor.Green, 5 );
+			Move mk=new Move([-500.0, 0.0, -500.0]);
 			Scale scr = new Scale([1.1, 1.1, 1.1]);
 			kr.addTransformation(mk);
 			b.Koruna.addTransformation( r );
@@ -48,10 +61,16 @@ namespace Star
                 ConsoleKeyInfo key = Console.ReadKey(true); // true = nezobrazí znak v konzoli
 
                 switch (key.Key)
-                {
-                    case ConsoleKey.W:
-                        lookAt[ 2 ] += 0.5;
-			eye [ 2 ] += 0.5;
+		{
+			case ConsoleKey.W:
+				Point forward = (lookAt - eye);
+				forward.Normalize();
+				for ( int i = 0; i < 3; ++i )
+			{
+				eye[ i ] -= forward[ i ] * 0.6;
+				lookAt [ i ] -=  forward[ i ] * 0.6;
+
+			}
                         break;
                     case ConsoleKey.A:
 			Point k = Point.Cross( lookAt - eye, up);
@@ -64,8 +83,14 @@ namespace Star
 
                         break;
                     case ConsoleKey.S:
-                          lookAt[ 2 ] -= 0.5;
-			eye [ 2 ] -= 0.5;
+            		Point krr = (lookAt - eye);
+			krr.Normalize();
+				for ( int i = 0; i < 3; ++i )
+			{
+				eye[ i ] +=krr[ i ] * 0.6;
+				lookAt [ i ] +=krr[ i ] * 0.6;
+
+			}
                         break;
                     case ConsoleKey.D:
                         Point re = Point.Cross( lookAt - eye, up);
@@ -109,9 +134,10 @@ namespace Star
 						scr.vecscale[ 1 ] -= 0.01;
 						scr.vecscale[ 2 ] -= 0.01;
 					}
-				 Thread.Sleep(60);
+				// Thread.Sleep(60); fps korekce nutná. - rychlost výpisu ascci a výpočtů nesmí hrát roli na rychlost v prostředí - vlákno navíc či měření času mezi?
 			}
 
 		}
+
 	}
 }
