@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 namespace Star
-{
-	class MainStar //
+{//
+	class MainStar 
 	{
 		public static void Main( string[] args )
 		{
@@ -62,16 +62,16 @@ namespace Star
 			up.SetCoordinates([0.0, 1.0, 0.0 ]);
 			Camera c = new Camera(eye, lookAt, up);
 
-			Scene foresrScene = new Scene( c, 311, 52, Math.PI / 15, 0.1, 500.0 ); //311 vs 52
+			Scene foresrScene = new Scene( c, 311, 82, Math.PI / 20, 0.1, 500.0 ); //311 vs 52
 			Star_2d s = new Star_2d(9, Plane.xy, 'o', ' ', ConsoleColor.Red);
 			Move m = new Move([0.0, -5.0, -50]);
 			s.addTransformation( m );
 
 			Random rnd = new Random();
-			for ( int i = 0; i < 5; ++i )
+			for ( int i = 0; i < 15; ++i )
 			{
-					double z = ( double ) - rnd.Next() % 100;
-					double x = (double) rnd.Next() % 151 - 75;
+					double z = ( double ) - rnd.Next() % 200;
+					double x = (double) rnd.Next() % 251 - 125;
 					double height = (double) rnd.Next() % 22 + 3;
 					Tree br = new Tree (2*height/15,height,height/2, Osa.y, 7, 3);
 					Move mr = new Move([x, - height , z]);

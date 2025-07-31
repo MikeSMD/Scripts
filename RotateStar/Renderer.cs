@@ -77,7 +77,11 @@ namespace Star
 					}
 					if ( grid [ y ][ x ].depth > newpoints.depth )
 					{
-						grid[ y ][ x ].sign = r.points[ i ].sign;
+						if ( newpoints.depth > 0.9993 )//?
+						{
+							grid[ y ][ x ].sign = '.';
+						}
+						else grid[ y ][ x ].sign = r.points[ i ].sign;
 						grid[ y ][ x ].depth = newpoints.depth;
 						grid[ y ] [ x ].cc = r.points[ i ].cc;
 					}
