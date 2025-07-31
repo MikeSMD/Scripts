@@ -2,7 +2,7 @@
 using System.Threading;
 namespace Star
 {
-	class MainStar
+	class MainStar //
 	{
 		public static void Main( string[] args )
 		{
