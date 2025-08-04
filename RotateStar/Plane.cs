@@ -2,26 +2,11 @@ using System;
 
 namespace Star
 {
-	class Plane_2d : IRenderable
+	class Plane_2d : Renderable
 	{
-		public Point[] points {get; private set;}
-		public List < Transformation > transformations {get; private set; }
-		public double density { get; set; }
-		public bool transparent { get; set; }
-		private char sign ;
-		private ConsoleColor cc;
-	
-		public Plane_2d(  char sign, ConsoleColor cc = ConsoleColor.White, double density = 1.0, bool transparent = false)
+		public Plane_2d(  char sign, ConsoleColor cc = ConsoleColor.White) : base ( sign, cc )
 		{
-			transformations = new List <Transformation> ();
-			this.density = density;
-			this.transparent = transparent ;
-			this.sign = sign;
-			this.cc = cc;
-		}
-		public void GetTriangulated()
-		{
-			this.points = DataMiner.getData("objekry/plane.txt", sign, cc ).ToArray();
+			//
 		}
 		public void getPointed(double width, double heighr, Plane plane, int div = 1)
 		{
@@ -69,9 +54,6 @@ namespace Star
 
 		}
 
-		public void addTransformation( Transformation q )
-		{
-			transformations.Add( q );
-		}
+	
 		}
 }

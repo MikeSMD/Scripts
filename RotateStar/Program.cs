@@ -68,7 +68,7 @@ namespace Star
 			Rotation q = new Rotation( -Math.PI/2, Osa.x);
 			Kuzel kuzel = new Kuzel( '.', ConsoleColor.Red );
 			Tree tree = new Tree(0.3, 1.5);
-			kuzel.BuildTriangulated();
+			kuzel.GetTriangulated();
 
 			kuzel.addTransformation(m);
 			scene.AddObject( kuzel );

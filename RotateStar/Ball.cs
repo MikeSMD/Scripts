@@ -2,31 +2,17 @@ using System;
 
 namespace Star
 {
-	class Ball : IRenderable
+	class Ball : Renderable
 	{
-		public Point[] points {get; private set;}
-		public List < Transformation > transformations {get; private set; }
-		public bool transparent {get; set; } = false;
-		public double density  { get; set; } = 1.0;
-		private char sign;
-		private ConsoleColor cc;
-			public Ball( char sign, ConsoleColor cc = ConsoleColor.White )
+	
+		public Ball( char sign, ConsoleColor cc = ConsoleColor.White ) : base( sign, cc )
 		{
-			transformations = new List <Transformation> ();
-			this.sign = sign;
-			this.cc = cc;
+			//
 		}
-
-		public void GetTriangulated()
-		{
-			this.points = DataMiner.getData("objekry/ball.txt", sign, cc ).ToArray();
-		}
-
 
 		public void GetPointed( double radius, int ro = 1)
 		{
 			Random rnd = new Random();
-			transformations = new List <Transformation> ();
 			if ( radius <= 0.0 )
 			{
 				throw new ArgumentException ("size musi byt alespon 3");
@@ -59,10 +45,6 @@ namespace Star
 
 		}
 
-		public void addTransformation( Transformation q )
-		{
-			transformations.Add( q );
-		}
 
-		}
+	}
 }

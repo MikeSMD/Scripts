@@ -2,26 +2,12 @@ using System;
 
 namespace Star
 {
-	class Star_2d : IRenderable
+	class Star_2d : Renderable
 	{
-		public Point[] points {get; private set;}
-		public List < Transformation > transformations {get; private set; }
-
-
-
-		public double density { get; set; } = 1.0;
-		public bool transparent { get; set; } = false;
-		private char sign;
-		private ConsoleColor cc;
-		/**
-		 * plane - v jake rovine mit tu 2d hvezdu
-		 * velist - pocet radku
-		 */
-		public Star_2d( char sign, ConsoleColor cc = ConsoleColor.White)
+	
+		public Star_2d( char sign, ConsoleColor cc = ConsoleColor.White) : base ( sign, cc )
 		{
-			transformations = new List <Transformation> ();
-			this.sign = sign;
-			this.cc = cc;
+			//
 		}
 
 		public void getPointed(int size = 12, Plane plane = Plane.xy, char fill = '.' )
@@ -92,37 +78,5 @@ namespace Star
 			}
 			points = points_list.ToArray();
 		}
-
-
-		public void addTransformation( Transformation q )
-		{
-			transformations.Add( q );
-		}
-			
-		/** 	
-		 * pomoci exponenicalni funkce..
-		 *	
-		 * bitovy posun (-1 u sudych pokud neni stred pak stejny jak ostatni) 
-		 * 1 -> 2 -> 4 -> 8 -> 16 - velikost - 9/10
-		 *
-		 * 		*
-		 * 	        *
-		 * 	       ***
-		 * 	     *******
-		 * 	 ***************
-		 * 	     *******
-		 * 	       ***
-		 * 	        *
-		 * 	        *
-		 *
-		 * 	       //velikost 3
-		 *
-		 *		*
-		 *	       ***
-		 *	        *
-		 *
-		 *
-		 *
-		 */	
 		}
 }

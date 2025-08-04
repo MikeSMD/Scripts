@@ -15,6 +15,7 @@ namespace Star
 		private IProjection _projection;
 		private Camera camera;
 		private PrimitiveType primitive;
+		private Random random;
 		public ConsoleRenderer( int width, int heighr, double scale, IProjection projection, Camera camera = null, PrimitiveType primitive = PrimitiveType.PT_Point )
 		{
 			if ( width < 0 || heighr < 0 || scale <= 0.0 )
@@ -28,6 +29,8 @@ namespace Star
 			_scale = scale;
 			_projection = projection;
 			_scene = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ',true, ConsoleColor.White), _width).ToArray()).ToArray();
+			random = new Random();
+			
 		}
 
 
@@ -38,12 +41,13 @@ namespace Star
 		}
 
 
-		public void RenderScene( List < IRenderable > render_obects )
+		public void RenderScene( List < Renderable > render_obects )
 		{
+
 			(char sign, double depth, ConsoleColor cc)[][] grid = Enumerable.Range(0, _heighr).Select(_ => Enumerable.Repeat((' ', double.PositiveInfinity,ConsoleColor.White ), _width).ToArray()).ToArray();
 
 			List <(double x, double y, double depth, char sign, ConsoleColor cc)> triangles = new List <(double x, double y, double depth, char sign, ConsoleColor cc)>();
-			foreach( IRenderable r in render_obects )
+			foreach( Renderable r in render_obects )
 			{
 				//spojení matic do homogenní matice- případ na dodělání
 				Point[] points = TransformSequence.applyMultipleTransformations(r.transformations, r.points);
@@ -121,6 +125,8 @@ namespace Star
 
 									if ( ( p1 > 0 || p2 > 0 || p3 > 0 ) && ( p1 < 0 || p2 < 0 || p3 < 0 ) )
 										continue;
+
+								
 									// pokud vse projde - aktualizace hloubky gridu, pokud je blize a pokud je na hrane dam i znak - drateny model prozarim, pak pridam normaly a interpolaci jejich
 									// interpolace hloubky - velmi zjednodusena opet.. jinak dle barycenrrickych souradnic
 									// dle vzdalenosti od vrcholu ABC bodu P

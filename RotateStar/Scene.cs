@@ -6,7 +6,7 @@ namespace Star
 	delegate void Prenos();
 	class Scene
 	{
-		public List< IRenderable > render_obects {get; set;} = new  List< IRenderable >(); // var :(
+		public List< Renderable > render_obects {get; set;} = new  List< Renderable >(); // var :(
 		public Camera camera {get; set;}
 		public readonly ConsoleRenderer consoleRenderer;
 		public Prenos Updator {get; set;}
@@ -24,7 +24,7 @@ namespace Star
 			consoleRenderer = new ConsoleRenderer( width, height, scale, op, null, primirive );
 		}
 
-		public void AddObject ( IRenderable obc )
+		public void AddObject ( Renderable obc )
 		{
 			render_obects.Add( obc );
 		}

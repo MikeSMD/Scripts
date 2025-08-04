@@ -2,34 +2,14 @@ using System;
 
 namespace Star
 {
-	class Cylinder : IRenderable
+	class Cylinder : Renderable
 	{
-		public Point[] points {get; private set;}
-		public List < Transformation > transformations {get; private set; }
-		public bool transparent {get; set; } = false;
-		public double density  { get; set; } = 1.0;	
-		private char sign;
-		private ConsoleColor cc;
-		public Cylinder( char sign, ConsoleColor cc = ConsoleColor.White )
+	
+		public Cylinder( char sign, ConsoleColor cc = ConsoleColor.White ) : base ( sign, cc )
 		{
-	transformations = new List <Transformation> ();
-			this.sign = sign;
-			this.cc = cc;
-
+			//
 		}
 
-
-
-
-
-
-
-		public void GetTriangulated()
-		{
-			this.points = DataMiner.getData("objekry/cylinder.txt", sign, cc).ToArray();
-		}
-
-		
 		public void GetPointed( char signP, double radius, double height, Osa osa = Osa.y, int ro = 1 )
 		{
 			char signR = sign;
@@ -124,43 +104,5 @@ namespace Star
 			points = points_list.ToArray();
 		}
 
-
-
-
-
-
-
-
-
-		public void addTransformation( Transformation q )
-		{
-			transformations.Add( q );
-		}
-
-		/** 	
-		 * pomoci exponenicalni funkce..
-		 *	
-		 * bitovy posun (-1 u sudych pokud neni stred pak stejny jak ostatni) 
-		 * 1 -> 2 -> 4 -> 8 -> 16 - velikost - 9/10
-		 *
-		 * 		*
-		 * 	        *
-		 * 	       ***
-		 * 	     *******
-		 * 	 ***************
-		 * 	     *******
-		 * 	       ***
-		 * 	        *
-		 * 	        *
-		 *
-		 * 	       //velikost 3
-		 *
-		 *		*
-		 *	       ***
-		 *	        *
-		 *
-		 *
-		 *
-		 */	
-		}
+	}
 }

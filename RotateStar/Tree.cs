@@ -7,11 +7,7 @@ namespace Star
 		public Cylinder Kmen {get; set;}
 		public Ball Koruna {get; set;}
 		public List < Cylinder > Vetvicky { get; set; }
-		
-		/**
-		 * plane - v jake rovine mit tu 2d hvezdu
-		 * velist - pocet radku
-		 */
+
 
 			public Tree(double scaleL, double scaleW)
 		{
