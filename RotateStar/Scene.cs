@@ -10,18 +10,18 @@ namespace Star
 		public Camera camera {get; set;}
 		public readonly ConsoleRenderer consoleRenderer;
 		public Prenos Updator {get; set;}
-		public Scene( Camera camera, int width, int height, double focal, double pear, double far )
+		public Scene( Camera camera, int width, int height, double focal, double pear, double far, PrimitiveType primirive = PrimitiveType.PT_Point  )
 		{
 			this.camera = camera;
 			var pp = new PrespectiveProjection( width, height, focal, pear, far );
-			consoleRenderer = new ConsoleRenderer( width, height,1.0, pp, this.camera );
+			consoleRenderer = new ConsoleRenderer( width, height,1.0, pp, this.camera, primirive );
 		}
 
-		public Scene( Plane plane, int width, int height, double scale )
+		public Scene( Plane plane, int width, int height, double scale, PrimitiveType primirive = PrimitiveType.PT_Point )
 		{
 			this.camera = null;
 			var op = new OrthogonalProjection( plane );
-			consoleRenderer = new ConsoleRenderer( width, height, scale, op );
+			consoleRenderer = new ConsoleRenderer( width, height, scale, op, null, primirive );
 		}
 
 		public void AddObject ( IRenderable obc )

@@ -6,12 +6,24 @@ namespace Star
 	{
 		public Point[] points {get; private set;}
 		public List < Transformation > transformations {get; private set; }
+		public bool transparent {get; set; } = false;
+		public double density  { get; set; } = 1.0;
+		private char sign;
+		private ConsoleColor cc;
+			public Ball( char sign, ConsoleColor cc = ConsoleColor.White )
+		{
+			transformations = new List <Transformation> ();
+			this.sign = sign;
+			this.cc = cc;
+		}
 
-		/**
-		 * plane - v jake rovine mit tu 2d hvezdu
-		 * velist - pocet radku
-		 */
-		public Ball( double radius, char sign, ConsoleColor cc = ConsoleColor.White, int ro = 1 )
+		public void GetTriangulated()
+		{
+			this.points = DataMiner.getData("objekry/ball.txt", sign, cc ).ToArray();
+		}
+
+
+		public void GetPointed( double radius, int ro = 1)
 		{
 			Random rnd = new Random();
 			transformations = new List <Transformation> ();
@@ -44,36 +56,13 @@ namespace Star
 				}
 			}	
 			points = points_list.ToArray();
+
 		}
+
 		public void addTransformation( Transformation q )
 		{
 			transformations.Add( q );
 		}
-			
-		/** 	
-		 * pomoci exponenicalni funkce..
-		 *	
-		 * bitovy posun (-1 u sudych pokud neni stred pak stejny jak ostatni) 
-		 * 1 -> 2 -> 4 -> 8 -> 16 - velikost - 9/10
-		 *
-		 * 		*
-		 * 	        *
-		 * 	       ***
-		 * 	     *******
-		 * 	 ***************
-		 * 	     *******
-		 * 	       ***
-		 * 	        *
-		 * 	        *
-		 *
-		 * 	       //velikost 3
-		 *
-		 *		*
-		 *	       ***
-		 *	        *
-		 *
-		 *
-		 *
-		 */	
+
 		}
 }

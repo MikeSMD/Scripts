@@ -12,10 +12,27 @@ namespace Star
 		 * plane - v jake rovine mit tu 2d hvezdu
 		 * velist - pocet radku
 		 */
+
+			public Tree(double scaleL, double scaleW)
+		{
+			Kmen = new Cylinder('|', ConsoleColor.DarkYellow );
+			Koruna = new Ball('@', ConsoleColor.Green );
+			Koruna.GetTriangulated();
+			Kmen.GetTriangulated();
+
+			Scale sc = new Scale([scaleL, scaleL, scaleW]);
+			Move mv = new Move([0.0, 0.0, 1.0]);
+			Kmen.addTransformation(mv);
+		Kmen.addTransformation(sc);
+		}
+
 		public Tree( double kmen_radius, double kmen_height,double koruna_radius, Osa osa = Osa.y, int roKmen = 2, int roKoruna = 2)
 		{
-			Kmen = new Cylinder(kmen_radius, kmen_height,'|', '.', osa, ConsoleColor.DarkYellow ,roKmen);
-			Koruna = new Ball(koruna_radius, '\0', ConsoleColor.Green,roKoruna);
+			Kmen = new Cylinder('|', ConsoleColor.DarkYellow );
+			Koruna = new Ball('@', ConsoleColor.Green );
+			Koruna.GetPointed(koruna_radius, roKoruna );
+			Kmen.GetPointed( '.', kmen_radius, kmen_height, osa, roKmen );
+		
 			Move move;
 			if ( osa == Osa.x )
 			{

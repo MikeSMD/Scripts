@@ -7,13 +7,25 @@ namespace Star
 		public Point[] points {get; private set;}
 		public List < Transformation > transformations {get; private set; }
 
+
+
+		public double density { get; set; } = 1.0;
+		public bool transparent { get; set; } = false;
+		private char sign;
+		private ConsoleColor cc;
 		/**
 		 * plane - v jake rovine mit tu 2d hvezdu
 		 * velist - pocet radku
 		 */
-		public Star_2d( int size, Plane plane, char sign, char fill = '.', ConsoleColor cc = ConsoleColor.White)
+		public Star_2d( char sign, ConsoleColor cc = ConsoleColor.White)
 		{
 			transformations = new List <Transformation> ();
+			this.sign = sign;
+			this.cc = cc;
+		}
+
+		public void getPointed(int size = 12, Plane plane = Plane.xy, char fill = '.' )
+		{
 			if ( size <= 2 )
 			{
 				throw new ArgumentException ("size musi byt alespon 3");
@@ -43,7 +55,7 @@ namespace Star
 					if ( mid == offset && row_index == 1 )
 						continue;
 					int row = (row_index == 0)? offset : 2*mid - offset;
-				
+
 					for ( int i = 0; i < stars; ++i )
 					{
 						char ksign = sign;
@@ -56,20 +68,20 @@ namespace Star
 						switch ( plane )
 						{
 							case Plane.xy:
-							{
-								k.SetCoordinates([i - stars/2, row, 0.0]);
-								break;
-							}
+								{
+									k.SetCoordinates([i - stars/2, row, 0.0]);
+									break;
+								}
 							case Plane.yz:
-							{
-								k.SetCoordinates([0.0, i - stars/2, row]); 
-								break;
-							}
+								{
+									k.SetCoordinates([0.0, i - stars/2, row]); 
+									break;
+								}
 							case Plane.xz:
-							{
-								k.SetCoordinates([i - stars/2, 0.0, row]);
-								break;
-							}
+								{
+									k.SetCoordinates([i - stars/2, 0.0, row]);
+									break;
+								}
 						}
 						points_list.Add( k );
 					}
@@ -80,6 +92,8 @@ namespace Star
 			}
 			points = points_list.ToArray();
 		}
+
+
 		public void addTransformation( Transformation q )
 		{
 			transformations.Add( q );
