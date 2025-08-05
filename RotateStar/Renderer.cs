@@ -150,6 +150,9 @@ namespace Star
 										q.Add((z3, 2));
 										(double z, int index) wq = q.MinBy(r=>r.z);
 										index = wq.index;
+
+										if (triangles[ index].sign == Specials.transparency ) 
+											continue;
 										grid[ y ][ x ].sign = triangles[ index ].sign;
 										grid[ y ][ x ].cc = triangles[ index ].cc;
 										grid[ y ][ x ].depth = depth;

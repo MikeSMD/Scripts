@@ -2,58 +2,14 @@ using System;
 
 namespace Star
 {
-	class Tree
+	class Tree : Renderable
 	{
-		public Cylinder Kmen {get; set;}
-		public Ball Koruna {get; set;}
-		public List < Cylinder > Vetvicky { get; set; }
 
-
-			public Tree(double scaleL, double scaleW)
+		public Tree( char sign, ConsoleColor cc = ConsoleColor.White) : base ( sign, cc )
 		{
-			Kmen = new Cylinder('|', ConsoleColor.DarkYellow );
-			Koruna = new Ball('@', ConsoleColor.Green );
-			Koruna.GetTriangulated();
-			Kmen.GetTriangulated();
-
-			Scale sc = new Scale([scaleL, scaleL, scaleW]);
-			Move mv = new Move([0.0, 0.0, 1.0]);
-			Kmen.addTransformation(mv);
-		Kmen.addTransformation(sc);
+			//
 		}
 
-		public Tree( double kmen_radius, double kmen_height,double koruna_radius, Osa osa = Osa.y, int roKmen = 2, int roKoruna = 2)
-		{
-			Kmen = new Cylinder('|', ConsoleColor.DarkYellow );
-			Koruna = new Ball('@', ConsoleColor.Green );
-			Koruna.GetPointed(koruna_radius, roKoruna );
-			Kmen.GetPointed( '.', kmen_radius, kmen_height, osa, roKmen );
-		
-			Move move;
-			if ( osa == Osa.x )
-			{
-			move = new Move([ kmen_height / 3.0, 0.0, 0.0 ]);
-			}
-			if ( osa == Osa.y )
-			{
-			move = new Move([0.0, - kmen_height / 3.0 , 0.0 ]);
-			}
-			else
-			{
-			move = new Move([0.0, 0.0, kmen_height / 3.0]);
-			}
-			Koruna.addTransformation( move );
-		}
-		public void addTransformationAll( Transformation q )
-		{
-			Koruna.addTransformation( q );
-			Kmen.addTransformation( q );
-		}
-		public void RegisterAll( Scene k )
-		{
-			k.AddObject (Kmen);
-			k.AddObject (Koruna);
-			//k.Register(kmen);
-		}
+
 	}
 }

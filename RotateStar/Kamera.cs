@@ -74,14 +74,17 @@ namespace Star
 			p.MakeHomogenous(); // -.-
 			return p;
 		}
-
+	
 		public void GoForward()
-		{
+			{
 			//jednoduše přeneseme viektor kam kamera míří do kamera sapce a posuneme
-			Point forward = lookAt - position;
+			Point forward = lookAt - position; //zde neni jeste forward ale v camera space,ono ro funguje ale jen pro ty pripady kdy by kamera mela stejne proporce up apod jako po aplikaci viewmatrix takze pohled na -z a y nahoru
+
+			//dosraneme forward do camera space
 			forward.MakeHomogenous();
-			forward = RotatePitch( forward );
-			forward = RotateYaw( forward );
+
+			forward = RotatePitch(forward);
+			forward = RotateYaw(forward);
 			forward.MakeKartezs();
 			forward.Normalize();
 
@@ -91,12 +94,14 @@ namespace Star
     				lookAt[i] = lookAt[i] - forward[i] *  this.speedWalk;  // forward je normovaný vektor
 			}	
 		}
+	
+		
 		public void GoBackward() //to same -.- - do vice funkci..
 		{
 			Point forward = lookAt - position;
 			forward.MakeHomogenous();
-			forward = RotatePitch( forward );
-			forward = RotateYaw( forward );
+			forward = RotatePitch(forward);
+			forward = RotateYaw(forward);
 			forward.MakeKartezs();
 			forward.Normalize();
 

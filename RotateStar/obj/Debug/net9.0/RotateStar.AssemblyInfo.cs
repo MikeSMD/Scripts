@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RotateStar")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4fda938075c97c4cd19046e4e87fb434a28c49a2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c623a3ca26da26c029188e2b182412edf8259dcc")]
 [assembly: System.Reflection.AssemblyProductAttribute("RotateStar")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RotateStar")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

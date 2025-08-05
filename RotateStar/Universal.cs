@@ -6,9 +6,10 @@ namespace Star
 	{
 		public static List < Point > getData( string filePath, char sign = '.', ConsoleColor cc = ConsoleColor.White)
 		{
+		
 			if ( !File.Exists( filePath ) )
 			{
-			 	throw new ArgumentException("sohbor neexistuje");
+			 	throw new ArgumentException($"sohbor {filePath} neexistuje");
 			}
 			
 			var points_list = new List < Point > ();
@@ -18,8 +19,11 @@ namespace Star
 				while( ( line = reader.ReadLine() ) != null )
 				{
              			   string[] parts = line.Split(',');
-
 				   Point p = new Point( 3, sign, cc);
+				   if ( p.sign == Specials.randomness )
+				   {
+					p.sign = (char)Specials.random.Next(32, 125);   
+				}
 				   double[] k = new double[ 3 ];
 
 				   int k_index = 0;
