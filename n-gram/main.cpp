@@ -8,22 +8,25 @@
 
 #include <algorithm>
 #include <cctype>
+#include <locale>
 
 std::string clean_word(const std::string &s)
 {
     std::string result;
-    for(char c : s)
+    for (unsigned char c : s)
     {
-        if(std::isalnum(c)) // ponechá písmena a čísla
-            result += std::tolower(c); // můžeš i převést na malé písmeno
+        // A-Z, a-z, 0-9 zůstane, cokoliv nad 127 (UTF-8 diakritika) taky
+        if (std::isalnum(c) || c >= 128)
+            result += c;
     }
+    std::cout << result << " ";
     return result;
 }
 
 int main( void )
 {
 
-	std::ifstream file("corpus.txt");
+	std::ifstream file("corpusCzech.txt");
 	if (!file.is_open()) {
 		std::cerr << "Nelze otevrit soubor\n";
 		return 1;
