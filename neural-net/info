@@ -1,0 +1,17 @@
+gradient descent 
+    princip
+        ke každé složce funkce v dimenzi D se vypočítá její směrnice, když jsou ostatní složky fixní - tedy - jak moc daná funkce stoupá, pokud zvýšíme danou složku a ponecháme ostatní jak jsou. hdonoty všech směrnic (tg(x) - jaký má úhel tečna k funkci v daném bodě ( aktuální hodnotě dané složky )) v jejich konkrétních bodech dáme do vektoru - to je gradient descent 
+
+        počítáme jaždou dimenzi zvlášť ne najednou, je to problém? - nebo spíše bias? - nepovažuje se to za problém. jedná se spíše o modularitu výpočtu.
+             vzhledem k tomu že všechny počítáme ke konkrétnímu bodu je jedno ve výsledku zda necháme zbytek fixní, když všechny k tomu bodu dáme do vektoru pospolu. 
+             grok - vzhledem k tomu, že všechny parciální derivace jsou počítány v konkrétním bodě (kde jsou ostatní proměnné fixní právě v tom bodě), je ve výsledku skutečně jedno, jak se to počítá odděleně. Když je pak "dáme do vektoru pospolu", dostaneme gradient, který celkově popisuje směr a rychlost změny funkce v okolí toho bodu pro libovolný směr pohybu.
+
+             v ANN vypočteme onen výpočet gradientu a pak v rámci každého směru posuneme o určitou část všechny hodnoty - tedy o konkrétní směr jež je kombinací všech směrů, tento směr by měl být snižován ve směru klesání (pokud používáme loss funkci kde platí, větší - větší chyba)
+
+
+
+
+backpropagace
+rakže slovy je to následující princip máme LOSS delta neuronu (biasu) je jak moc ovlivní loss funkci (jak moc roste pokud se zvýší jeho hodnota biasu) Pro deltu biasu kaýždého neuronu platí následující rovnice - dle parciálních derivací delta biasu je rovna SUMĚ všech delta biasů následujících neuronů v síti jež jsou vynásobeny příslušnou váhou rna cestě mezi nimi. Pokud má pak neuron AKTIVAČNÍ FUNKCI, vynásobí se tato suma derivací této funkce. Delta samotných vah je pak pouze hodnota výstupu z předchozí vrsrvy vynásobena deltou biasu neuronu v další vrstvě
+výsledek ? pokud jedu deltu bias - vezmu předchozí deltu biasu, vynásobím ji vahou mezi nimi.. a pokud má aktivační funkci tak i její derivací
+pokud jedu váhu dostanu deltu biasu dalšího neuronu a vynásobím výstupem předchozí

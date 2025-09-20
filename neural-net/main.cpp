@@ -1,11 +1,49 @@
 #include <iostream>
 #include "neuralnet.h"
 #include <algorithm>
+
+
+#include <math.h>
+
+
+double loss(double predicted, double target )
+{
+    return pow( predicted - target , 2 );
+}
+
+double loss_derivative(double predicted, double target )
+{
+    return 2*( predicted - target );
+}
+
+
+
+double ReLu( double input )
+{
+    if ( input < 0 )
+    {
+        return 0;
+    }
+    else return input ;
+}
+double ReLuDerivation( double input )
+{
+    if ( input <= 0 )
+    {
+        return 0;
+    }
+    else return 1;
+}
+
+
 int main( void )
 {
 
-	ANN* ann = new ANN( {2,3,5,12,15,22,1} );
-	ANN::Neuron::SetMethod( [](double x) { return std::max(0.0,x ); } );
+	ANN* ann = new ANN( {2,5,1} );
+    ann->setLoss( loss );
+    ann->setLossDerivative( loss_derivative );
+	ANN::Neuron::SetMethod( ReLu );
+    ANN::Neuron::SetDerivative( ReLuDerivation );
 	
 
 	while( true )
@@ -13,7 +51,13 @@ int main( void )
 		double k,p;
 		std::cin >> k;
 		std::cin >> p;
-		std::cout << ann->ForwardPass( { k,p })[ 0 ] << std::endl;
+        const std::vector<double>& result = ann->ForwardPass( { k,p } );
+        for ( int i = 0; i < result.size(); ++i )
+        {
+            std::cout << result[ i ] << ",";
+        }
+        ann->gradientCounter({ p });
+        std::cout << std::endl;
 	}	
 
 	delete ann;
@@ -21,4 +65,5 @@ int main( void )
 }
 
 std::function<double(double)> ANN::Neuron::activation_method = nullptr;
+std::function<double(double)> ANN::Neuron::derivative = nullptr;
 
