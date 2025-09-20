@@ -15,3 +15,9 @@ backpropagace
 rakže slovy je to následující princip máme LOSS delta neuronu (biasu) je jak moc ovlivní loss funkci (jak moc roste pokud se zvýší jeho hodnota biasu) Pro deltu biasu kaýždého neuronu platí následující rovnice - dle parciálních derivací delta biasu je rovna SUMĚ všech delta biasů následujících neuronů v síti jež jsou vynásobeny příslušnou váhou rna cestě mezi nimi. Pokud má pak neuron AKTIVAČNÍ FUNKCI, vynásobí se tato suma derivací této funkce. Delta samotných vah je pak pouze hodnota výstupu z předchozí vrsrvy vynásobena deltou biasu neuronu v další vrstvě
 výsledek ? pokud jedu deltu bias - vezmu předchozí deltu biasu, vynásobím ji vahou mezi nimi.. a pokud má aktivační funkci tak i její derivací
 pokud jedu váhu dostanu deltu biasu dalšího neuronu a vynásobím výstupem předchozí
+
+
+
+uceni po batchi?
+batch je cast inputu po ktere se upravuje sit dle gradientu - nedela se to po kazdem..
+jednoduse to funguje tak ze si vezmu batch spoctu pro kazdy vstup gradient, zprumeruju jej a posunu.

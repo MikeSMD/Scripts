@@ -6,7 +6,7 @@
 
 #include "generator.h"
 
-class ANN
+class ANN 
 {
 	public:
 	
@@ -126,7 +126,7 @@ class ANN
 	std::vector< Layer > layers;
 
 
-	std::vector<double> ForwardPass( std::vector< double > inputs )
+	std::vector<double> ForwardPass( std::vector< double > inputs, std::vector< double > expected = {} )
 	{
 		for ( std::size_t i = 0; i < layers.size(); ++i )
 		{
@@ -134,6 +134,10 @@ class ANN
 			layers[ i ].PassLayer( inputs, result );
 			inputs= std::move(result );
 		}
+        if ( updating && expected.size() >= 1)
+            {
+                backpropagate( expected );
+            }
 		return inputs;
 	}
 
@@ -151,15 +155,58 @@ class ANN
 
 
 
+    int current_iterator;
+    std::vector< std::vector< double > > bd_weights;
+    std::vector< std::vector< double > > bd_biases; 
 
+    void backpropagate( std::vector< double > expected )
+    {
+        std::cout << "JEDU BACKPROPAGACE"<< std::endl;
+        current_iterator++;
+        std::vector< std::vector< double > > d_weights = {};
+        std::vector< std::vector< double > > d_biases = {};
+        
+        gradientCounter(d_weights, d_biases, expected);
+        
+        for ( int i = 0; i < bd_weights.size(); ++i )
+        {
+            for ( int j = 0; j < bd_weights[ i ].size(); ++j )
+            {
+                bd_weights[ i ][ j ] += d_weights[ i ][ j ];
+            }
 
+            for ( int j = 0; j < bd_biases[ i ].size(); ++j )
+            {
+                bd_biases[ i ][ j ] += d_biases[ i ][ j ];
+            }
+        }
+        std::cout << current_iterator << " / " << batch << std::endl;
+        if ( current_iterator >= this->batch )
+        {
+            current_iterator = 0;
 
-    void gradientCounter( std::vector< double > expected )
+            for ( int i = 0; i < bd_weights.size(); ++i )
+            {
+                for ( int j = 0; j < bd_weights[ i ].size(); ++j )
+                {
+                    bd_weights[ i ][ j ] /= batch;
+                }
+
+                for ( int j = 0; j < bd_biases[ i ].size(); ++j )
+                {
+                    bd_biases[ i ][ j ] /= batch;
+                }
+            }
+            updateANN( bd_weights, bd_biases );
+        }
+    }
+
+    void gradientCounter( std::vector< std::vector< double > >& d_weights, std::vector< std::vector< double > >& d_biases,   std::vector< double > expected )
     {
 
         //delty vah + biasu dle vrstev - celkove to tvori gradient 
-        std::vector< std::vector< double > > d_weights = {}; 
-        std::vector< std::vector< double > > d_biases = {};
+        d_weights = {};
+        d_biases = {};
 
         // pocet vrstev v siti
         const std::size_t layers_count = layers.size();
@@ -222,9 +269,13 @@ class ANN
 
             }
         }
+    }
 
-        // gradoient descent update 
-        const double learning = 0.001;
+
+    void updateANN( const std::vector< std::vector< double > > d_weights, const std::vector< std::vector< double > > d_biases)
+    {
+        std::cout << "update.." << std::endl;
+         const int layers_count = this->layers.size();
         for ( int i = 0; i < layers_count; ++i )
         {
             for ( int bias = 0; bias < layers[ i ].neurons.size(); ++bias )
@@ -252,17 +303,30 @@ class ANN
         this->loss_derivative = lossDerivative;
     } 
 
-	ANN( const std::vector< int >& layers_vec )
+
+    double learning;
+    int batch;
+
+    bool updating = true;
+	ANN( const std::vector< int >& layers_vec, double learning, int batch_size ) : learning( learning ), batch( batch_size ), updating( true )
 	{
 		if ( layers_vec.size() < 2 )
 		{
 			throw std::runtime_error("layers musi byt alespon 2");
 		}
+
+        current_iterator = 0;
+
+        bd_biases.resize(layers_vec.size());
+        bd_weights.resize(layers_vec.size());
+
 		for ( std::size_t i = 0; i < layers_vec.size(); ++i )
 		{
+            bd_biases[ i ].resize( layers_vec[ i ] );
 			layers.emplace_back( layers_vec [ i ], !( i == 0 || i == layers_vec.size() - 1 ), i != 0 );
 			if ( i < layers_vec.size() - 1 )
 			{
+                bd_weights[ i ].resize( layers_vec[ i + 1 ] * layers_vec[ i ] );
 				layers[ i ].InitWeights(layers_vec[ i + 1 ]);
 			}
 		}
