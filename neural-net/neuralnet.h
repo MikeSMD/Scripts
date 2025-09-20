@@ -198,6 +198,19 @@ class ANN
                 }
             }
             updateANN( bd_weights, bd_biases );
+
+             for ( int i = 0; i < bd_weights.size(); ++i )
+            {
+                for ( int j = 0; j < bd_weights[ i ].size(); ++j )
+                {
+                    bd_weights[ i ][ j ] = 0.0;
+                }
+
+                for ( int j = 0; j < bd_biases[ i ].size(); ++j )
+                {
+                    bd_biases[ i ][ j ] = 0.0;
+                }
+            }
         }
     }
 

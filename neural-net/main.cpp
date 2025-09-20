@@ -13,7 +13,7 @@ void train( int p,ANN& ann )
         const double q = generator.generateDouble(5.0, 10.0);
         const double r = generator.generateDouble(5.0, 10.0);
 
-        ann.ForwardPass( { q,r }, {q+r} );
+        ann.ForwardPass( { q,r }, {q-r, q+r} );
         std::cout << std::endl;
     }
 }
@@ -51,7 +51,7 @@ double ReLuDerivation( double input )
 int main( void )
 {
 
-	ANN* ann = new ANN( {2,5,1}, 0.001, 5 );
+	ANN* ann = new ANN( {2,5,3,2}, 0.0001, 5 );
     ann->setLoss( loss );
     ann->setLossDerivative( loss_derivative );
 	ANN::Neuron::SetMethod( ReLu );
@@ -70,7 +70,7 @@ int main( void )
         }
         else
         {
-        const std::vector<double>& result = ann->ForwardPass( { k,p }, { k+p } );
+        const std::vector<double>& result = ann->ForwardPass( { k,p }, { k-p, k+p } );
         for ( int i = 0; i < result.size(); ++i )
         {
             std::cout << result[ i ] << ",";
