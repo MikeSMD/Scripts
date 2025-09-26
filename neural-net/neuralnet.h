@@ -14,8 +14,8 @@ class ANN
 	{
 		double bias;
 		bool activation;
-		static std::function< double(double) > activation_method;
-		static std::function< double(double) > derivative;
+		static std::function< double( std::vector< double > ) > activation_method;
+		static std::function< double( std::vector< double > ) > derivative;
 
 	    double last_output;
         double last_input_to;
@@ -32,8 +32,10 @@ class ANN
 			{
 				output_value = Neuron::activation_method( value + bias );
 			}
-            
-			output_value = (value + bias);
+            else 
+            {
+			    output_value = (value + bias);
+            }
             last_output = output_value;
 
             return output_value;
@@ -161,7 +163,7 @@ class ANN
 
     void backpropagate( std::vector< double > expected )
     {
-        std::cout << "JEDU BACKPROPAGACE"<< std::endl;
+      //  std::cout << "JEDU BACKPROPAGACE"<< std::endl;
         current_iterator++;
         std::vector< std::vector< double > > d_weights = {};
         std::vector< std::vector< double > > d_biases = {};
@@ -180,7 +182,7 @@ class ANN
                 bd_biases[ i ][ j ] += d_biases[ i ][ j ];
             }
         }
-        std::cout << current_iterator << " / " << batch << std::endl;
+     //   std::cout << current_iterator << " / " << batch << std::endl;
         if ( current_iterator >= this->batch )
         {
             current_iterator = 0;
@@ -336,7 +338,8 @@ class ANN
 		for ( std::size_t i = 0; i < layers_vec.size(); ++i )
 		{
             bd_biases[ i ].resize( layers_vec[ i ] );
-			layers.emplace_back( layers_vec [ i ], !( i == 0 || i == layers_vec.size() - 1 ), i != 0 );
+			 layers.emplace_back( layers_vec [ i ], !( i == 0 || i == layers_vec.size() - 1 ), i != 0 );
+        //    layers.emplace_back( layers_vec [ i ], !( i == 0 ), i != 0 ); //neurony v output vrstve maji aktivacni funkci
 			if ( i < layers_vec.size() - 1 )
 			{
                 bd_weights[ i ].resize( layers_vec[ i + 1 ] * layers_vec[ i ] );
