@@ -17,14 +17,14 @@ class ITrain
             ann = new ANN( layers, learning_rate, batch_size );
        }
 
-       void setActivation ( std::function< double ( double ) > activation )
+       void setActivation ( std::function< void ( std::vector< double >&, std::size_t  ) > activation )
        {
-           ANN::Neuron::SetMethod( activation );
+           ANN::Layer::SetMethod( activation );
        }
 
-       void setActivationDerivation ( std::function< double ( double ) > activationDerivation )
+       void setActivationDerivation ( std::function< void ( std::vector< double >&, std::size_t  ) > activationDerivation )
        {
-           ANN::Neuron::SetDerivative( activationDerivation );
+           ANN::Layer::SetDerivative( activationDerivation );
        } 
 
         void setLoss( std::function< double ( double, double ) > loss )
@@ -46,5 +46,5 @@ class ITrain
        
     
 };
-std::function<double(double)> ANN::Neuron::activation_method = nullptr;
-std::function<double(double)> ANN::Neuron::derivative = nullptr;
+std::function< void ( std::vector< double >&, std::size_t  )> ANN::Layer::activation_method = nullptr;
+std::function< void ( std::vector< double >&, std::size_t  )> ANN::Layer::derivative = nullptr;

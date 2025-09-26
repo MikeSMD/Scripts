@@ -13,49 +13,35 @@ class ANN
 	struct Neuron
 	{
 		double bias;
-		bool activation;
-		static std::function< double( std::vector< double > ) > activation_method;
-		static std::function< double( std::vector< double > ) > derivative;
 
-	    double last_output;
-        double last_input_to;
-        Neuron ( double bias, bool activation = false ) : bias( bias ), activation(activation)
-		{
+        Neuron ( double bias ) : bias( bias )
+        {
 			//
 		}
+    
 
-		double Pass( double value )
+		double PassLinear( double value )
 		{
-            double output_value = 0.0;
-            last_input_to = value+bias;
-			if ( activation )
-			{
-				output_value = Neuron::activation_method( value + bias );
-			}
-            else 
-            {
-			    output_value = (value + bias);
-            }
-            last_output = output_value;
-
-            return output_value;
+            return value + bias ;
 		}
 
-		static void SetMethod(std::function< double(double) > p)
-		{
-			Neuron::activation_method = p;
-		}
-        static void SetDerivative( std::function < double ( double ) > p )
-        {
-            Neuron::derivative = p;
-        }
 	};
 
 
 	struct Layer
 	{
 		std::vector< Neuron > neurons;
-
+		static std::function< void ( std::vector< double >&, std::size_t ) > activation_method;
+		static std::function< void ( std::vector< double >&, std::size_t ) > derivative;
+ 
+        static void SetMethod(std::function< void ( std::vector< double >&, std::size_t ) > p)
+        {
+            Layer::activation_method = p;
+        }
+        static void SetDerivative( std::function < void ( std::vector< double >&, std::size_t ) > p )
+        {
+            Layer::derivative = p;
+        }
 		/*
 		 * weights[ c(l+1) * i + j ], kde
 		 * c je pocet neuronu v levelu 
@@ -66,7 +52,10 @@ class ANN
 		 */
 		std::vector< double > weights;
 
-		Layer( int neurons_count, bool activation = false, bool hasBias=false )
+        std::vector< double > last_input ;
+        std::vector< double > last_output ;
+
+		Layer( int neurons_count, bool hasBias=false )
 		{
 			neurons.reserve( neurons_count );
 			for ( std::size_t i = 0; i < neurons_count; ++i )
@@ -76,7 +65,7 @@ class ANN
                 {
                     bias = Generator::GetInstance().generateDouble( -1.0, 1.0 );
                 }
-                neurons.emplace_back(bias ,activation);
+                neurons.emplace_back(bias);
 			}
 		}
 
@@ -91,7 +80,7 @@ class ANN
 			}
 		}
 
-		void PassLayer( std::vector< double >& input, std::vector< double >& result )
+		void PassLayer( std::vector< double >& input, std::vector< double >& result, std::size_t layer_number )
 		{
 			if ( input.size() != this->neurons.size() )
 			{
@@ -102,8 +91,15 @@ class ANN
 
 			for ( std::size_t i = 0; i < neurons.size(); ++i )
 			{
-				activated_inputs.emplace_back(neurons[ i ].Pass(input[ i ]));
+				activated_inputs.emplace_back(neurons[ i ].PassLinear(input[ i ]));
 			}
+            
+            this->last_input = std::vector< double >( activated_inputs );
+
+            Layer::activation_method( activated_inputs, layer_number );
+
+            this->last_output = std::vector< double >( activated_inputs );
+            
 			result.clear();
 			if ( weights.size() == 0 )
 			{
@@ -133,7 +129,7 @@ class ANN
 		for ( std::size_t i = 0; i < layers.size(); ++i )
 		{
 			std::vector< double > result ;
-			layers[ i ].PassLayer( inputs, result );
+			layers[ i ].PassLayer( inputs, result, i );
 			inputs= std::move(result );
 		}
         if ( updating && expected.size() >= 1)
@@ -245,7 +241,7 @@ class ANN
                     double delta_next = d_biases[ current + 1 ][ weight % count ];
 
                     // input odkud vaha ukazuje
-                    double input = this->layers[ current ].neurons[ weight / count ].last_output;
+                    double input = this->layers[ current ].last_output[ weight / count ];
 
                     //vysledna delta pro vahu
                     double delta = delta_next * input ;
@@ -264,8 +260,8 @@ class ANN
                 //pokud posledni vrsrva
                 if ( index == 0 )
                 {
-                    delta = loss_derivative( actual.last_output, expected [ bias ]);
-                    std::cout <<"loss - " << loss( actual.last_output, expected[ bias ] ) << ",";
+                    delta = loss_derivative( layers[ current ].last_output[ bias ], expected [ bias ]);
+                    std::cout <<"loss - " << loss( layers[ current ].last_output[ bias ], expected[ bias ] ) << ",";
                 }
                 else 
                 {
@@ -276,13 +272,17 @@ class ANN
                         delta += d_biases[ current + 1 ][ i ] * layers[ current ].weights[bias*counter+i]; 
                     }
                 }
-                if ( actual.activation )
-                {
-                      delta *= Neuron::derivative( actual.last_input_to );
-                }
                 d_biases[ current ] [ bias ] = delta;
-
             }
+            std::vector< double > inputs (layers[ current ].last_input );
+            Layer::derivative( inputs, current );
+
+            for ( int i = 0; i < inputs.size(); ++i )
+            {
+                d_biases[ current ] [ i ] *= inputs[ i ];
+            }
+            
+
         }
     }
 
@@ -338,8 +338,7 @@ class ANN
 		for ( std::size_t i = 0; i < layers_vec.size(); ++i )
 		{
             bd_biases[ i ].resize( layers_vec[ i ] );
-			 layers.emplace_back( layers_vec [ i ], !( i == 0 || i == layers_vec.size() - 1 ), i != 0 );
-        //    layers.emplace_back( layers_vec [ i ], !( i == 0 ), i != 0 ); //neurony v output vrstve maji aktivacni funkci
+			 layers.emplace_back( layers_vec [ i ], i != 0 ); // meni se bias v backpropagaci pozor, vsechny i ty co tam nemaji byt..
 			if ( i < layers_vec.size() - 1 )
 			{
                 bd_weights[ i ].resize( layers_vec[ i + 1 ] * layers_vec[ i ] );
