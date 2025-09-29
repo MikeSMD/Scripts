@@ -1,9 +1,8 @@
-
-
-
-
 #include "neuralnet.h"
 #include <functional>
+
+
+
 class ITrain 
 {
     protected:
@@ -17,21 +16,21 @@ class ITrain
             ann = new ANN( layers, learning_rate, batch_size );
        }
 
-       void setActivation ( std::function< void ( std::vector< double >&, std::size_t  ) > activation )
+       void setActivation ( std::function< Eigen::VectorXd ( const Eigen::VectorXd&, std::size_t  ) > activation )
        {
            ANN::Layer::SetMethod( activation );
        }
 
-       void setActivationDerivation ( std::function< void ( std::vector< double >&, std::size_t  ) > activationDerivation )
+       void setActivationDerivation ( std::function< Eigen::MatrixXd ( const Eigen::VectorXd&, std::size_t  ) > activationDerivation )
        {
            ANN::Layer::SetDerivative( activationDerivation );
        } 
 
-        void setLoss( std::function< double ( double, double ) > loss )
+        void setLoss( std::function< Eigen::VectorXd ( const Eigen::VectorXd& , const Eigen::VectorXd ) > loss )
        {
           ann->setLoss( loss );
        } 
-        void setLossDerivation( std::function< double ( double, double ) > loss_derivative )
+        void setLossDerivation( std::function< Eigen::VectorXd ( const Eigen::VectorXd& , const Eigen::VectorXd ) > loss_derivative )
        {
           ann->setLossDerivative( loss_derivative );
        } 
@@ -46,5 +45,5 @@ class ITrain
        
     
 };
-std::function< void ( std::vector< double >&, std::size_t  )> ANN::Layer::activation_method = nullptr;
-std::function< void ( std::vector< double >&, std::size_t  )> ANN::Layer::derivative = nullptr;
+std::function< Eigen::VectorXd ( const Eigen::VectorXd&, std::size_t )> ANN::Layer::activation_method = nullptr;
+std::function< Eigen::MatrixXd ( const Eigen::VectorXd&, std::size_t )> ANN::Layer::derivative = nullptr;

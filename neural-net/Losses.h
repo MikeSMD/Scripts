@@ -4,9 +4,32 @@
 
 
 #include <math.h>
+#include <Eigen/Dense>
 class Losses
 {
     public:
+        static Eigen::VectorXd Cross_entropy ( Eigen::VectorXd predicted, Eigen::VectorXd expected )
+        {
+            double epsilon = 1e-12;
+            Eigen::VectorXd y = predicted.array().max(epsilon).min(1.0 - epsilon); 
+            return -(expected.array() * y.array().log());
+        }
+
+
+
+
+        static Eigen::VectorXd Cross_entropy_derivate ( Eigen::VectorXd predicted, Eigen::VectorXd expected )
+        {
+            if (predicted.size() != expected.size()) {
+                throw std::invalid_argument("Vektory predicted a expected musí mít stejnou velikost.");
+            }
+
+            // Softmax
+            Eigen::VectorXd exp_logits = predicted.array().exp();
+            Eigen::VectorXd y = exp_logits / exp_logits.sum();
+            // Derivace: y - expected
+            return y - expected;
+        }
         static double SSE( double predicted, double expected )
         {
             return std::pow( predicted - expected, 2 );

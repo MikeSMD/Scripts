@@ -1,6 +1,8 @@
-#include <iostream>
-
+#include <vector>
+#include <Eigen/Dense>
 #include <math.h>
+
+#include <algorithm>
 class Activations 
 {
     
@@ -41,6 +43,37 @@ class Activations
          }
          else return 1;
      } 
+
+     static Eigen::VectorXd softMax ( const Eigen::VectorXd& vec )
+     {
+         // -maxValue neni v klasicke matematicke funkci avsak tu se to uziva kvuli overflow apod e^x jde ruychle do velkcyh hodnot - odecet je numericka stabilizace
+         double maxValue = vec.maxCoeff();
+         double sum = (vec.array() - maxValue).exp().sum();
+
+
+         Eigen::VectorXd result = (vec.array() - maxValue).exp();
+         result /= sum;
+         return result;
+     }
+
+     static Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic > softMaxDerivate( const Eigen::VectorXd& vec ) {
+
+         Eigen::VectorXd s = Activations::softMax(vec); 
+         int n = s.size();
+         Eigen::MatrixXd J = Eigen::MatrixXd::Zero(n, n);
+
+         for (int i = 0; i < n; ++i) {
+             for (int j = 0; j < n; ++j) {
+                 if (i == j) {
+                     J(i, j) = s(i) * (1 - s(i));
+                 } else {
+                     J(i, j) = -s(i) * s(j);
+                 }
+             }
+         }
+         return J;
+     }
+
 
 
 };

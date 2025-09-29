@@ -12,12 +12,54 @@ gradient descent
 
 
 backpropagace
-rakže slovy je to následující princip máme LOSS delta neuronu (biasu) je jak moc ovlivní loss funkci (jak moc roste pokud se zvýší jeho hodnota biasu) Pro deltu biasu kaýždého neuronu platí následující rovnice - dle parciálních derivací delta biasu je rovna SUMĚ všech delta biasů následujících neuronů v síti jež jsou vynásobeny příslušnou váhou rna cestě mezi nimi. Pokud má pak neuron AKTIVAČNÍ FUNKCI, vynásobí se tato suma derivací této funkce. Delta samotných vah je pak pouze hodnota výstupu z předchozí vrsrvy vynásobena deltou biasu neuronu v další vrstvě
+rakže slovy je to následující princip máme delta neuronu (biasu).
+delta neuronu - je jak moc ovlivní loss funkci (jak moc roste pokud se zvýší jeho hodnota biasu).
+Pro výpočet delty biasu každého neuronu platí následující rovnice - delta bias je roven SUMĚ všech delta biasů následujících neuronů v síti jež jsou vynásobeny příslušnou váhou rna cestě mezi nimi. Pokud má pak neuron AKTIVAČNÍ FUNKCI, vynásobí se tato suma derivací této funkce. 
+
+Delta samotných vah je pak pouze hodnota výstupu z předchozí vrsrvy vynásobena deltou biasu neuronu v další vrstvě.
+
 výsledek ? pokud jedu deltu bias - vezmu předchozí deltu biasu, vynásobím ji vahou mezi nimi.. a pokud má aktivační funkci tak i její derivací
-pokud jedu váhu dostanu deltu biasu dalšího neuronu a vynásobím výstupem předchozí
+pokud jedu váhu dostanu deltu biasu dalšího neuronu a vynásobím výstupem předchozí (bez derivace)
 
 
 
 uceni po batchi?
 batch je cast inputu po ktere se upravuje sit dle gradientu - nedela se to po kazdem..
 jednoduse to funguje tak ze si vezmu batch spoctu pro kazdy vstup gradient, zprumeruju jej a posunu.
+
+
+ok ale doteď to bylo tak, že delta biasu v neuronu se zpočítá součtem následujících delt biasů jež jsou vynásobeny váhou  (pokud tam není další vrstva tak je to derivace lossu predicted vs expected ) s případné vynásbení derivací aktivační funkcí (pokud ji neuron ve kterém je počítaná derivace biasu existuje) - těmto aktivacím, které přijímají jednu hodnotu se říká element wise aktivace..
+ony vrací matici pro vrstvu (ale jen vlastně s jedním řádkem takže vektor)
+. Standardní případ: Element-wise aktivace (např. ReLU, sigmoid)
+Derivace aktivace $ f'(\mathbf{z}^{(l)}) $ je vektor (nebo diagonální matice), protože každý $ a_i^{(l)} $ závisí jen na $ z_i^{(l)} $.
+Delta pro vrstvu l se počítá:
+
+Nejdřív propaguj gradient přes váhy následující vrstvy: $ \mathbf{g} = \mathbf{W}^{(l+1)^T} \cdot \delta^{(l+1)} $ (to je ten "součet delt následující vrstvy vynásobených vahami" – pro každý neuron j v l: $ g_j = \sum_k \delta_k^{(l+1)} \cdot w_{kj}^{(l+1)} $).
+Pak vynásob element-wise derivací aktivace: $ \delta^{(l)} = \mathbf{g} \odot f'(\mathbf{z}^{(l)}) $, kde ⊙ je element-wise násobení.
+
+
+Proč to funguje? Jacobian aktivace $ \mathbf{J}^{(l)} = \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} $ je diagonální matice s prvky $ f'(z_i^{(l)}) $ na diagonále, takže $ \mathbf{J}^{(l)^T} \cdot \mathbf{g} $ se zjednoduší na element-wise násobení.
+
+měl jsem to doteď naprogramované bez matic.. ale jedná se pouze o nejjednodušší princip.. a nejméně efektivní - pokud děláme s maticemi - máme k dispozici gpu, paralelismus, lepší efektivitu
+ 
+co když nám ale vrací derivace aktivační funkce matici - jakobián??
+jakobián - derivace kde pro každý výstup udělá všechny parciální derivace
+
+obecný princip backpropagace.
+Pokud aktivace není element-wise (jako softmax, kde každý výstup závisí na všech vstupech), pak derivace je plný Jacobian (marice n x n, kde n je počet neuronů ve vrstvě l).
+
+maticeDelt(l) = Jakobian(l)^T * (maticeVah(l+1) * maticeDelt(l+1)) 
+pokud to je posledni vrstva tak se jedna o princip Jakobian(l)^T * (derivaceLoss(predicted, expected))
+-- zde je jakobian jako vysledek derivace aktivacni funkce 
+znamena ze kazda aktivacni funkce vraci Jakobiarr- jrr vetsina z nich jen dela proste diagonalu
+
+Krok za krokem výpočet (pro arrival at solution)
+Předpokládejme síť se softmaxem ve vrstvě l (např. uprostřed sítě, což je neobvyklé, ale pro ilustraci). Nechť vrstva l má 3 neurony, vrstva l+1 má 2.
+
+Krok 1: Máš maticeDelta(l+1) (vektor 2x1 z vrstvy l+1).
+Krok 2: Propaguj přes váhy: g = maticeVah(i+1)^T * maticeDelt(i+1) (vektor 3x1; to je ten "součet delt * váhy").
+Krok 3: Sestav Jacobian J}(l) pro softmax (3x3 matice, jak jsme měli dříve).
+Krok 4: Vypočítej deltaMatice(l) = J(l)^T * g (maticové násobení, výsledkem vektor 3x1).
+Krok 5: Teď použij delta(l) $ pro gradienty: Gradient biasu v l = delta(l) gradient vah do l = \delta(l) * a*(l-1)^T $, atd.
+
+

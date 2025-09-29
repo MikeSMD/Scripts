@@ -2,17 +2,21 @@
 #include <vector>
 #include <sstream>
 
+
+#include <Eigen/Dense>
+
 class FileReader 
 {
     public:
-    static std::vector< std::vector< double > > readCSV( std::string path )
+    static std::vector< Eigen::VectorXd > readCSV( std::string path )//qweqwe
     {
         std::fstream file_stream( path );
         if( ! file_stream.is_open() )
         {
             throw std::runtime_error( "soubor " + path + " nelze otevrit " );
         }
-        std::vector< std::vector< double > > data = {};
+        std::vector< Eigen::VectorXd > data = {};
+
         std::string line_data;
         while( std::getline( file_stream, line_data ) )
         {
@@ -24,8 +28,7 @@ class FileReader
             {
                 data_values.push_back( std::stod( value_str ) );
             }
-            data.emplace_back( std::move( data_values ) );
-
+            data.emplace_back( Eigen::Map<Eigen::VectorXd>( data_values.data(), data_values.size() ) );
         }
         return data;
     }
