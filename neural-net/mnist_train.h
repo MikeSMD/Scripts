@@ -1,6 +1,7 @@
 #include "file_reader.h"
 #include "ITrain.h"
 #include <cmath>
+#include <cstdlib>
 #include <eigen3/Eigen/src/Core/Matrix.h>
 
 class Mnist_train : public ITrain 
@@ -9,7 +10,7 @@ class Mnist_train : public ITrain
         std::size_t layer_count;
         const std::string file_train_input = "MNIST/mnist_train_images.csv";
         const std::string file_train_expected = "MNIST/mnist_train_labels.csv";
-        const std::string file_test_input = "MNIST/mnist_test_labels.csv";
+        const std::string file_test_input = "MNIST/mnist_test_images.csv";
         const std::string file_test_expected = "MNIST/mnist_test_labels.csv";
 
 
@@ -21,11 +22,6 @@ class Mnist_train : public ITrain
     Mnist_train ( std::vector < int > layers, double learning, int batch_size ) : ITrain( layers, learning, batch_size )
     {
         this->layer_count = layers.size();
-    }
-
-    void test()
-    {
-        //
     }
 
     virtual void train( int count ) // po radcich - online read
@@ -52,17 +48,51 @@ class Mnist_train : public ITrain
             if ( percentage != percentage_now )
             {
                 percentage = percentage_now;
-                std::cout << percentage << std::endl;
+                system("clear");
+                std::cout << percentage << "%" << std::endl;
+            }
+        }
+    }
+
+    double testAnn() 
+    {
+        std::cout << "starting train " << std::endl;
+        std::vector < Eigen::VectorXd > input = {};
+        std::vector< Eigen::VectorXd > expected = {};
+
+        input = FileReader::readCSV( this->file_test_input );
+        expected = FileReader::readCSV( this->file_test_expected );
+    
+        int count = input.size();
+        
+        int correct = 0;
+
+        std::cout << input.size() << "x" << expected.size() << std::endl;
+        for ( int i = 0; i < count; ++i )
+        {
+            Eigen::VectorXd res = ann->ForwardPass( input[ i ], expected[ i ] );
+            
+            int index = 0;
+            int max = res( 0 );
+            
+            for ( int j = 1; j < res.size(); ++j )
+            {
+                if( max < res ( j ) )
+                {
+                    index = j;
+                    max = res( j );
+                }
             }
             
-      /*      std::cout << res.transpose()  << ",";
-            std::cout << std::endl;
             
-            std::cout << expected[ i ].transpose() << ",";
-            std::cout << std::endl;
-            std::cout << std::endl;
-            */
+            if ( expected [ i ]( index ) > 0.0 )
+            {
+                correct += 1;
+            }
+            
+            
         }
+        return 100.0 * correct / count;
     }
 
     std::function< double ( double )> activation_hidden;  
@@ -84,17 +114,24 @@ class Mnist_train : public ITrain
 
     std::function < Eigen::VectorXd ( Eigen::VectorXd, Eigen::VectorXd) > loss;
     std::function < Eigen::VectorXd ( Eigen::VectorXd, Eigen::VectorXd) > loss_derivative;
+
+  //  std::function < double ( double, double ) > loss;
+  //  std::function < double ( double, double ) > loss_derivative;
+    
     Eigen::VectorXd ClassicLosses( const Eigen::VectorXd& vec, const Eigen::VectorXd& exp )
     {
 
         return loss( vec, exp );
-        //return  vec.binaryExpr(exp, [this](double x, double y) {
-          //          return this->loss( x, y ); 
-            //});
+       // return  vec.binaryExpr(exp, [this](double x, double y) {
+         //           return this->loss( x, y ); 
+           // });
     }
     Eigen::VectorXd ClassicLossesDerivation( const Eigen::VectorXd& vec, const Eigen::VectorXd& exp )
     {
         return loss_derivative( vec, exp );
+      //     return  vec.binaryExpr(exp, [this](double x, double y) {
+        //            return this->loss_derivative( x, y ); 
+          //  });
     }
     Eigen::MatrixXd classic_activation_derivation (const Eigen::VectorXd& vec, std::size_t i )
     {
