@@ -3,6 +3,11 @@
 #include <cmath>
 #include <cstdlib>
 #include <eigen3/Eigen/src/Core/Matrix.h>
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <thread>       // std::thread
+#include <atomic>       // std::atomic
+#include <chrono>       // std::chrono::milliseconds
 
 class Mnist_train : public ITrain 
 {
@@ -22,10 +27,27 @@ class Mnist_train : public ITrain
     Mnist_train ( std::vector < int > layers, double learning, int batch_size ) : ITrain( layers, learning, batch_size )
     {
         this->layer_count = layers.size();
+        Eigen::setNbThreads(12); // nebo počet CPU jader
+        Eigen::initParallel();
     }
-
+    
     virtual void train( int count ) // po radcich - online read
     {
+        std::atomic<int> processed = 0;
+    /*
+        std::thread progress_thread([&]() {
+            int last = -1;
+            while (processed < count) {
+                int current = processed * 100 / count;
+                if (current != last) {
+                    last = current;
+                    system("clear");
+                    std::cout << current << "%" << std::endl;
+                }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        });
+        */
         std::vector < Eigen::VectorXd > input = {};
         std::vector< Eigen::VectorXd > expected = {};
 
@@ -42,16 +64,11 @@ class Mnist_train : public ITrain
         int percentage = 0;
         for ( int i = 0; i < count; ++i )
         {
-            Eigen::VectorXd res = ann->ForwardPass( input[ i ] , expected[ i ] );
-            
-            int percentage_now = i*100/ count;
-            if ( percentage != percentage_now )
-            {
-                percentage = percentage_now;
-                system("clear");
-                std::cout << percentage << "%" << std::endl;
-            }
+            Eigen::VectorXd res = ann->ForwardPass( input[ i ] ,expected[ i ] );
+           // ++processed;
         }
+        //progress_thread.join();
+        
     }
 
     double testAnn() 
@@ -70,7 +87,7 @@ class Mnist_train : public ITrain
         std::cout << input.size() << "x" << expected.size() << std::endl;
         for ( int i = 0; i < count; ++i )
         {
-            Eigen::VectorXd res = ann->ForwardPass( input[ i ], expected[ i ] );
+            Eigen::VectorXd res = ann->ForwardPass( input[ i ], {} );
             
             int index = 0;
             int max = res( 0 );

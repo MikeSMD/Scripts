@@ -114,4 +114,4 @@ if __name__ == "__main__":
         if data is not None:
             print(" ".join(map(lambda x: f"{x:.3f}", data)))
     except Exception as e:
-        print(f"Error: {str(e)}")
+       print(f"Error: {str(e)}")
