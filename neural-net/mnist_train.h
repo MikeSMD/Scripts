@@ -30,6 +30,11 @@ class Mnist_train : public ITrain
         Eigen::setNbThreads(12); // nebo počet CPU jader
         Eigen::initParallel();
     }
+
+    void setLearningRate( double learning )
+    {
+        ann->setLearningRate( learning );
+    }
     
     virtual void train( int count ) // po radcich - online read
     {

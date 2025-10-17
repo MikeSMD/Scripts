@@ -23,15 +23,29 @@ void qwe( double learning )
 	sad->setActivationDerivation([sad]( const Eigen::VectorXd& vec, std::size_t p ) { return sad->classic_activation_derivation(vec,p); } );
 
     double success = 0.1;
-    while ( success <= 75)
+    while ( success <= 80)
     {
+        if ( success > 50 )
+        {
+            std::cout << "learning to 0.03" << std::endl;
+            sad->setLearningRate(0.05);
+        }
+        if (success > 70)
+        {
+            std::cout << "learning to 0.005" << std::endl;
+            sad->setLearningRate(0.03);
+        }
+        if ( success > 75 ) sad->setLearningRate(0.01);
+
 	    sad->train( 60000 );
         double cur = sad->testAnn();
         std::cout << "data trained with " << cur << "\% success percentage" << std::endl;
         if ( cur < success - 5 )
         {
             std::cout << "success is worse.. breaking.." << std::endl;
+            break;
         }
+        success = cur;
     }
     sad->run();
     delete sad;
@@ -39,7 +53,7 @@ void qwe( double learning )
 
 int main( void )
 {
-    qwe(0.15);
+    qwe(0.085);
     return 1;
 }
 

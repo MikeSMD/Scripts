@@ -12,7 +12,11 @@
 class ANN 
 {
 	public:
-	
+
+    void setLearningRate(double learning)
+    {
+        this->learning = learning;
+    }	
 	struct Layer
 	{
         Eigen::VectorXd biases; // sloupcovy vektor
@@ -158,6 +162,7 @@ class ANN
     int current_iterator;
     Eigen::Matrix<double , Eigen::Dynamic, Eigen::Dynamic > bd_weights;
     Eigen::Matrix<double , Eigen::Dynamic, Eigen::Dynamic > bd_biases; 
+
 
     void backpropagate(const Eigen::VectorXd& returned, const Eigen::VectorXd& expected )
     {
