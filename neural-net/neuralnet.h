@@ -8,7 +8,11 @@
 #include <Eigen/Dense> // VectorXd - sloupcovy
 
 #include "generator.h"
-
+enum Optimalizations
+{
+    SGD, 
+    ADAMS
+} ;
 class ANN 
 {
 	public:
@@ -58,6 +62,9 @@ class ANN
                 }
                 biases(i) = bias;
 			}
+            db_last_step_biases = Eigen::VectorXd::Zero( biases_count );
+            db_last_size_biases = Eigen::VectorXd::Zero( biases_count );
+
 		}
 
 		void InitWeights( const size_t sizeOfFollowingLayer )
@@ -66,6 +73,9 @@ class ANN
 			Generator& p = Generator::GetInstance();
             this->weights.resize( count, sizeOfFollowingLayer );//radky, sloupce
             this->db_weights = Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >::Zero( count, sizeOfFollowingLayer );
+            
+        db_last_step_weights = Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >::Zero( count, sizeOfFollowingLayer );
+        db_last_size_weights = Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >::Zero( count, sizeOfFollowingLayer );
             for ( std::size_t i = 0; i < count; ++i )
             {
                 for ( std::size_t j = 0; j < sizeOfFollowingLayer; ++j )
@@ -98,17 +108,78 @@ class ANN
             
             return d_biases;
         }
+        
+        // instance of misto enum.. proste a jednoduse pattern jak u transformaci lol
+        double beta_1 = 0.0;
+        double beta_2 = 0.0;
 
-        void GradientApply( int batch, double learning )
+        Eigen::VectorXd db_last_step_biases;
+        Eigen::MatrixXd db_last_step_weights;
+
+        Eigen::VectorXd db_last_size_biases;
+        Eigen::MatrixXd db_last_size_weights;
+        void GradientApply( int batch, double learning, Optimalizations optimalization, std::size_t counter = 0 )
         {
             db_biases /= (double) batch;
             db_weights /= (double) batch;
     
-            db_biases*=learning;
-            db_weights *= learning;
+          
+            switch( optimalization )
+            {
+                case SGD:
+                    {
+                       db_biases*=learning;
+                       db_weights *= learning;
 
-            this->weights -= db_weights;
-            this->biases -= db_biases;
+                       this->weights -= db_weights;
+                       this->biases -= db_biases;
+                    }
+                    break;
+                case ADAMS:
+                    {
+                        Eigen::VectorXd matrixBias = beta_1 * db_last_step_biases;
+                        matrixBias += (1-beta_1) * db_biases;
+                        db_last_step_biases = matrixBias;
+
+                        Eigen::MatrixXd matrixWeights = beta_1 * db_last_step_weights;
+                        matrixWeights += (1-beta_1) * db_weights;
+                        db_last_step_weights = matrixWeights;
+
+                        Eigen::VectorXd sizeBias = beta_2 * db_last_size_biases;
+                        Eigen::VectorXd squared = db_biases.array().square();
+                        sizeBias += (1-beta_2) * squared;
+                        db_last_size_biases = sizeBias;
+
+                        Eigen::MatrixXd sizeWeigths = beta_2 * db_last_size_weights;
+                        Eigen::MatrixXd squaredW = db_weights.array().square();
+                        sizeWeigths += (1-beta_2) * squaredW;
+                        db_last_size_weights = sizeWeigths;
+
+                        //korekce
+                        Eigen::MatrixXd corStepWeights = db_last_step_weights / (1-pow(beta_1,counter));
+                        Eigen::MatrixXd corSizeWeights = db_last_size_weights / (1-pow(beta_2,counter));
+                        Eigen::VectorXd corStepBiases = db_last_step_biases / (1-pow(beta_1,counter));
+                        Eigen::VectorXd corSizeBiases= db_last_size_biases / (1-pow(beta_2,counter));
+                        
+                        // aktualizace
+                         Eigen::MatrixXd adams_weights = corStepWeights.array() / (corSizeWeights.array().sqrt() + 0.00000001);
+                         Eigen::VectorXd adams_biases = corStepBiases.array() / (corSizeBiases.array().sqrt() + 0.00000001);
+
+                       adams_biases*=learning;
+                       adams_weights *= learning;
+
+                       this->weights -= adams_weights;
+                       this->biases -= adams_biases;
+                    }
+
+
+
+                default:
+                    {
+                        std::runtime_error("Layers.gradientApply: not implemented");
+                    }
+            }
+       
 
             db_biases.setZero();
             db_weights.setZero();
@@ -174,8 +245,6 @@ class ANN
         {
           biases = this->layers[ this->layers.size() - 1 - i ].GradientCounter( biases );
         }
-       
-
 
         if ( current_iterator >= this->batch )
         {
@@ -183,11 +252,14 @@ class ANN
         }
     }
 
+
     void updateANN()
     {
+        static int counter = 0;
+        counter ++;
         for ( int i = 0; i < layers.size(); ++i )
         {
-            this->layers[ i ].GradientApply( this->batch, this->learning );
+            this->layers[ i ].GradientApply( this->batch, this->learning, this->optimalization, counter );
         }
     }
 
@@ -204,6 +276,17 @@ class ANN
     {
         this->loss_derivative = lossDerivative;
     } 
+   
+  
+    Optimalizations optimalization;
+    double beta1;
+    double beta2;
+    void setAdamsOptimalization( double beta1, double beta2 )
+    {
+        optimalization = ADAMS;
+        this->beta1 = beta1;
+        this->beta2 = beta2;
+    }
 
 
     double learning;
@@ -216,7 +299,9 @@ class ANN
 		{
 			throw std::runtime_error("layers musi byt alespon 2");
 		}
-
+        optimalization = SGD;
+        beta1 = 0.0;
+        beta2 = 0.0;
         current_iterator = 0;
 
 		for ( std::size_t i = 0; i < layers_vec.size(); ++i )

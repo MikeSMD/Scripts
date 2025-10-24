@@ -38,21 +38,7 @@ class Mnist_train : public ITrain
     
     virtual void train( int count ) // po radcich - online read
     {
-        std::atomic<int> processed = 0;
-    /*
-        std::thread progress_thread([&]() {
-            int last = -1;
-            while (processed < count) {
-                int current = processed * 100 / count;
-                if (current != last) {
-                    last = current;
-                    system("clear");
-                    std::cout << current << "%" << std::endl;
-                }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-        });
-        */
+        
         std::vector < Eigen::VectorXd > input = {};
         std::vector< Eigen::VectorXd > expected = {};
 
@@ -70,15 +56,21 @@ class Mnist_train : public ITrain
         for ( int i = 0; i < count; ++i )
         {
             Eigen::VectorXd res = ann->ForwardPass( input[ i ] ,expected[ i ] );
-           // ++processed;
+              if ( i % ( count / 10 ) == 0 )
+                {
+                    std::cout << ".";
+                }
         }
         //progress_thread.join();
         
     }
-
+    void setadams(double p, double q)
+    {
+        ann->setAdamsOptimalization(p,q);
+    }
     double testAnn() 
     {
-        std::cout << "starting train " << std::endl;
+        std::cout << std::endl << "starting train " << std::endl;
         std::vector < Eigen::VectorXd > input = {};
         std::vector< Eigen::VectorXd > expected = {};
 

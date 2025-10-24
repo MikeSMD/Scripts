@@ -1,0 +1,86 @@
+Konkrétní příklad aktualizace biasu v ADAMu
+Představme si, že máme jeden bias (b) v neuronové síti a chceme ho aktualizovat v prvním kroku tréninku (i = 1). Máme daný gradient pro tento bias, řekněme g_i = 0.5. Použijeme výchozí hodnoty ADAMu:
+
+lr (learning rate) = 0.001
+beta1 (váha pro průměr směru) = 0.9
+beta2 (váha pro průměr velikosti) = 0.999
+epsilon (stabilizační konstanta) = 0.00000001 (1e-8)
+Počáteční hodnota biasu: b_0 = 0.1
+Počáteční průměry: m_0 = 0 (průměr směru), v_0 = 0 (průměr velikosti)
+
+Teď provedeme jeden krok aktualizace biasu.
+
+Krok 1: Výpočet průměru směru (m_i)
+Průměr směru (m_i) kombinuje předchozí průměr (m_{i-1}) s aktuálním gradientem (g_i). Vzorec je:
+m_i = beta1 * m_{i-1} + (1 - beta1) * g_i
+Protože je to první krok (i = 1):
+
+m_{i-1} = m_0 = 0
+g_i = 0.5
+beta1 = 0.9
+
+Výpočet:
+m_1 = 0.9 * 0 + (1 - 0.9) * 0.5
+m_1 = 0 + 0.1 * 0.5
+m_1 = 0.05
+Tedy průměr směru je m_1 = 0.05. To znamená, že ADAM bere v úvahu aktuální gradient, ale protože je to první krok, nemá ještě žádnou historii, takže m_1 je jen 10 % gradientu (kvůli 1 - beta1 = 0.1).
+
+Krok 2: Výpočet průměru velikosti (v_i)
+Průměr velikosti (v_i) sleduje, jak velké jsou gradienty, aby mohl ADAM přizpůsobit velikost kroku. Vzorec je:
+v_i = beta2 * v_{i-1} + (1 - beta2) * g_i^2
+Zase je to první krok:
+
+v_{i-1} = v_0 = 0
+g_i = 0.5, takže g_i^2 = 0.5 * 0.5 = 0.25
+beta2 = 0.999
+
+Výpočet:
+v_1 = 0.999 * 0 + (1 - 0.999) * 0.25
+v_1 = 0 + 0.001 * 0.25
+v_1 = 0.00025
+Tedy průměr velikosti je v_1 = 0.00025. To ukazuje, že gradient není příliš velký, takže krok nebude příliš zmenšen.
+
+Krok 3: Korekce zkreslení
+ADAM koriguje průměry, protože na začátku tréninku (když m_0 a v_0 jsou nula) by mohly být podhodnocené. Korekce je:
+
+Pro průměr směru: m_i_korig = m_i / (1 - beta1^i)
+Pro průměr velikosti: v_i_korig = v_i / (1 - beta2^i)
+
+Protože je i = 1 (první krok):
+
+beta1 = 0.9, takže beta1^1 = 0.9
+beta2 = 0.999, takže beta2^1 = 0.999
+
+Korekce pro m_1:
+m_1_korig = 0.05 / (1 - 0.9)
+m_1_korig = 0.05 / 0.1
+m_1_korig = 0.5
+Korekce pro v_1:
+v_1_korig = 0.00025 / (1 - 0.999)
+v_1_korig = 0.00025 / 0.001
+v_1_korig = 0.25
+Tedy po korekci máme:
+
+m_1_korig = 0.5
+v_1_korig = 0.25
+
+Tato korekce zajistí, že na začátku tréninku jsou průměry bližší skutečným hodnotám gradientů.
+
+Krok 4: Aktualizace biasu
+Teď použijeme korigované průměry k aktualizaci biasu. Vzorec je:
+b_i = b_{i-1} - lr * m_i_korig / (sqrt(v_i_korig) + epsilon)
+Vstupní hodnoty:
+
+b_{i-1} = b_0 = 0.1
+lr = 0.001
+m_1_korig = 0.5
+v_1_korig = 0.25, takže sqrt(v_1_korig) = sqrt(0.25) = 0.5
+epsilon = 0.00000001
+
+Výpočet:
+b_1 = 0.1 - 0.001 * 0.5 / (0.5 + 0.00000001)
+b_1 = 0.1 - 0.001 * 0.5 / 0.50000001
+b_1 = 0.1 - 0.0005 / 0.50000001
+b_1 ≈ 0.1 - 0.001
+b_1 ≈ 0.099
+Tedy nová hodnota biasu po prvním kroku je b_1 ≈ 0.099.
