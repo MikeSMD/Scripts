@@ -59,6 +59,7 @@ class Mnist_train : public ITrain
               if ( i % ( count / 10 ) == 0 )
                 {
                     std::cout << ".";
+                    fflush ( stdout );
                 }
         }
         //progress_thread.join();

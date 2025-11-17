@@ -261,6 +261,10 @@ class ANN
         {
             this->layers[ i ].GradientApply( this->batch, this->learning, this->optimalization, counter );
         }
+        if ( this->random_batch )
+        {
+            this->batch = rand() % 64;
+        }
     }
 
     std::function < Eigen::VectorXd ( const Eigen::VectorXd&,const Eigen::VectorXd& ) > loss;
@@ -291,10 +295,22 @@ class ANN
 
     double learning;
     int batch;
+    bool random_batch;
 
     bool updating = true;
 	ANN( const std::vector< int >& layers_vec, double learning, int batch_size ) : learning( learning ), batch( batch_size ), updating( true )
 	{
+        srand ( time ( NULL ) );
+        if ( batch < 0 )
+        {
+            random_batch = true;
+            batch_size = rand() % 64 + 1; // lepsi generace priste..
+        }
+        else 
+        {
+            random_batch = false;
+        }
+
 		if ( layers_vec.size() < 2 )
 		{
 			throw std::runtime_error("layers musi byt alespon 2");
